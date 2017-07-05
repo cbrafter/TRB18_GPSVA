@@ -2,6 +2,7 @@
 
 VMNAME = sumovm
 ESCPATH = $(shell printf "%q\n" "$(shell pwd)")
+UESCPATH = $(shell pwd | sed -e 's/ /\\ /g' -e 's/\[/\\\[/g' -e 's/\]/\\\]/g')
 START ?= 1
 END ?= 10
 
@@ -11,8 +12,8 @@ build:
 ubuntu:
 	docker run \
 		-v /hardmem/results_TRB/:/hardmem/results/ \
-		-v $(ESCPATH)/mainCode/:/simulation/mainCode/ \
-		-v $(ESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
+		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \
+		-v $(UESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
 		-w /simulation/mainCode \
 		$(VMNAME) python parallelRun.py $(START) $(END)
 
@@ -25,20 +26,24 @@ mac:
 		$(VMNAME) python parallelRun.py $(START) $(END)
 
 test_ubuntu:
+	echo $(ESCPATH)
 	docker run \
 		-v /hardmem/results_jun17/:/hardmem/results/ \
-		-v $(ESCPATH)/mainCode/:/simulation/mainCode/ \
-		-v $(ESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
-		$(VMNAME) /bin/bash -c \
-		"cd simulation/mainCode; python dockerTest.py $(START) $(END)"
+		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \
+		-v $(UESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
+		-w /simulation/mainCode \
+		$(VMNAME) python dockerTest.py $(START) $(END)
 
 test_mac:
 	docker run \
 		-v $(ESCPATH)/results/:/hardmem/results/ \
 		-v $(ESCPATH)/mainCode/:/simulation/mainCode/ \
 		-v $(ESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
-		$(VMNAME) /bin/bash -c \
-		"cd simulation/mainCode; python dockerTest.py $(START) $(END)"
+		-w /simulation/mainCode \
+		$(VMNAME) python dockerTest.py $(START) $(END)
+
+echo_test:
+	echo $(UESCPATH)
 
 prune:
 	docker system prune

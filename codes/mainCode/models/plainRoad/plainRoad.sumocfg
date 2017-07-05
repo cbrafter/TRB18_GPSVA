@@ -1,0 +1,28 @@
+<configuration>
+    <input>
+        <net-file value="plainRoad.net.xml"/>
+        <route-files value="plainRoad.rou.xml"/>
+        <!--<additional-files value="plainRoad.det.xml"/>-->
+    </input>
+    <output>
+        <!--<summary-output value="../../simple/summary_000.xml"/>-->
+        <tripinfo-output value="../../simple/tripinfo_000.xml"/>
+        <!--<vehroute-output value="../../simple/vehroute_000.xml"/-->
+        <queue-output value="../../simple/queuedata_000.xml"/>
+    </output>
+    <time>
+        <begin value="0"/>
+        <step-length value="0.5"/>
+    </time>
+    <processing>
+        <!--TURN OFF TELEPORTING-->
+        <time-to-teleport value="-1"/>
+    </processing>
+    <report>
+        <no-step-log value="true"/>
+        <error-log value="logfile.txt"/>
+    </report>
+    <traci_server>
+        <remote-port value="8813"/>
+    </traci_server>
+</configuration>

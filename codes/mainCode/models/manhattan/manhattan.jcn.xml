@@ -1,0 +1,56 @@
+<junctions>
+	<junction id="b1" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="b2" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="b3" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="c1" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="c2" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="c3" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="d1" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="d2" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+	<junction id="d3" offset="0">
+	    <stage id="0" period="25" controlString="GGGgrrrrrrrr"/>
+	    <stage id="1" period="25" controlString="rrrGGGgrrrrr"/>
+	    <stage id="2" period="25" controlString="rrrrrrGGGgrr"/>
+	    <stage id="3" period="25" controlString="grrrrrrrrGGG"/>
+	</junction>
+</junctions>

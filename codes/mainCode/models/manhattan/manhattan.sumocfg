@@ -1,0 +1,28 @@
+<configuration>
+    <input>
+        <net-file value="manhattan.net.xml"/>
+        <route-files value="manhattan.rou.xml"/>
+        <additional-files value="manhattan.det.xml"/>
+    </input>
+    <output>
+        <!--<summary-output value="/hardmem/results/spatctrl_ft/manhattan/summary100_003.xml"/>-->
+        <tripinfo-output value="/hardmem/results/spatctrl_ft/manhattan/tripinfo100_003.xml"/>
+        <!--<vehroute-output value="/hardmem/results/spatctrl_ft/manhattan/vehroute100_003.xml"/-->
+        <queue-output value="/hardmem/results/spatctrl_ft/manhattan/queuedata100_003.xml"/>
+    </output>
+    <time>
+        <begin value="0"/>
+        <step-length value="0.1"/>
+    </time>
+    <processing>
+        <!--TURN OFF TELEPORTING-->
+        <time-to-teleport value="-1"/>
+    </processing>
+    <report>
+        <no-step-log value="true"/>
+        <error-log value="logfile.txt"/>
+    </report>
+    <traci_server>
+        <remote-port value="8813"/>
+    </traci_server>
+</configuration>

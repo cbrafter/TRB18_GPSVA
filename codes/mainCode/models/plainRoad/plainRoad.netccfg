@@ -1,0 +1,22 @@
+<configuration>
+    <input>
+        <node-files value="plainRoad.nod.xml"/>
+        <edge-files value="plainRoad.edg.xml"/>
+        <type-files value="plainRoad.typ.xml"/>
+        <connection-files value="plainRoad.con.xml"/>
+        <!--<tllogic-files value="plainRoad.tll.xml"/>-->
+    </input>
+
+    <output>
+        <output-file value="plainRoad.net.xml"/>
+    </output>
+    
+    <processing>
+       <no-turnarounds value="true"/>
+    </processing>
+
+    <report>
+        <verbose value="true"/>
+    </report>
+
+</configuration>

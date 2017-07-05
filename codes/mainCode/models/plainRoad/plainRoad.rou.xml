@@ -1,0 +1,56 @@
+<routes>
+    <vType id="typeHuman" accel="0.8" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="25" guiShape="passenger" color="1,1,0">
+    </vType>
+
+    <vType id="typeRobot" accel="0.8" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="25" guiShape="passenger" color="1,0,0">
+        <carFollowing-Krauss tau="0.1"/>
+    </vType>
+
+    <route id="eastWest" edges="4:3 3:2 2:1 1:0" />
+    <route id="westEast" edges="0:1 1:2 2:3 3:4" />
+    
+    <vehicle id="0" type="typeHuman" route="westEast" depart="0" />
+    <vehicle id="1" type="typeHuman" route="eastWest" depart="1" />
+    <vehicle id="2" type="typeHuman" route="eastWest" depart="2" />
+    <vehicle id="3" type="typeHuman" route="westEast" depart="2" />
+    <vehicle id="4" type="typeHuman" route="eastWest" depart="3" />
+    <vehicle id="5" type="typeHuman" route="westEast" depart="8" />
+    <vehicle id="6" type="typeHuman" route="eastWest" depart="9" />
+    <vehicle id="7" type="typeHuman" route="westEast" depart="9" />
+    <vehicle id="8" type="typeHuman" route="eastWest" depart="10" />
+    <vehicle id="9" type="typeHuman" route="westEast" depart="10" />
+    <vehicle id="10" type="typeHuman" route="eastWest" depart="11" />
+    <vehicle id="11" type="typeHuman" route="eastWest" depart="12" />
+    <vehicle id="12" type="typeHuman" route="westEast" depart="13" />
+    <vehicle id="13" type="typeHuman" route="eastWest" depart="17" />
+    <vehicle id="14" type="typeHuman" route="eastWest" depart="18" />
+    <vehicle id="15" type="typeHuman" route="westEast" depart="18" />
+    <vehicle id="16" type="typeHuman" route="eastWest" depart="19" />
+    <vehicle id="17" type="typeHuman" route="eastWest" depart="20" />
+    <vehicle id="18" type="typeHuman" route="westEast" depart="20" />
+    <vehicle id="19" type="typeHuman" route="eastWest" depart="21" />
+    <vehicle id="20" type="typeHuman" route="westEast" depart="21" />
+    <vehicle id="21" type="typeHuman" route="eastWest" depart="24" />
+    <vehicle id="22" type="typeHuman" route="westEast" depart="24" />
+    <vehicle id="23" type="typeHuman" route="westEast" depart="25" />
+    <vehicle id="24" type="typeHuman" route="westEast" depart="29" />
+    <vehicle id="25" type="typeHuman" route="eastWest" depart="30" />
+    <vehicle id="26" type="typeHuman" route="westEast" depart="30" />
+    <vehicle id="27" type="typeHuman" route="westEast" depart="31" />
+    <vehicle id="28" type="typeHuman" route="eastWest" depart="32" />
+    <vehicle id="29" type="typeHuman" route="eastWest" depart="33" />
+    <vehicle id="30" type="typeHuman" route="westEast" depart="33" />
+    <vehicle id="31" type="typeHuman" route="eastWest" depart="34" />
+    <vehicle id="32" type="typeHuman" route="eastWest" depart="35" />
+    <vehicle id="33" type="typeHuman" route="westEast" depart="35" />
+    <vehicle id="34" type="typeHuman" route="eastWest" depart="37" />
+    <vehicle id="35" type="typeHuman" route="westEast" depart="37" />
+    <vehicle id="36" type="typeHuman" route="eastWest" depart="38" />
+    <vehicle id="37" type="typeHuman" route="eastWest" depart="39" />
+    <vehicle id="38" type="typeHuman" route="eastWest" depart="41" />
+    <vehicle id="39" type="typeHuman" route="westEast" depart="41" />
+    <vehicle id="40" type="typeHuman" route="westEast" depart="43" />
+    <vehicle id="41" type="typeHuman" route="westEast" depart="45" />
+    <vehicle id="42" type="typeHuman" route="eastWest" depart="49" />
+    <vehicle id="43" type="typeHuman" route="westEast" depart="49" />
+</routes>

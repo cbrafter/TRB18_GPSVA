@@ -1,0 +1,27 @@
+<additional>
+	<inductionLoop id="stop0" lane="3:1_0" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream1" lane="3:1_0" pos="-18" freq="30" file="loops.out"/>
+	<inductionLoop id="stop2" lane="3:1_1" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream3" lane="3:1_1" pos="-18" freq="30" file="loops.out"/>
+
+	<inductionLoop id="stop4" lane="0:1_0" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream5" lane="0:1_0" pos="-18" freq="30" file="loops.out"/>
+	<inductionLoop id="stop6" lane="0:1_1" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream7" lane="0:1_1" pos="-18" freq="30" file="loops.out"/>
+
+	<inductionLoop id="stop8" lane="1:0_0" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream9" lane="1:0_0" pos="-18" freq="30" file="loops.out"/>
+	<inductionLoop id="stop10" lane="1:0_1" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream11" lane="1:0_1" pos="-18" freq="30" file="loops.out"/>
+
+	<inductionLoop id="stop12" lane="2:0_0" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream13" lane="2:0_0" pos="-18" freq="30" file="loops.out"/>
+	<inductionLoop id="stop14" lane="2:0_1" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream15" lane="2:0_1" pos="-18" freq="30" file="loops.out"/>
+
+	<inductionLoop id="stop16" lane="5:1_0" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream17" lane="5:1_0" pos="-18" freq="30" file="loops.out"/>
+
+	<inductionLoop id="stop18" lane="9:0_0" pos="-6" freq="30" file="loops.out"/>
+	<inductionLoop id="upstream19" lane="9:0_0" pos="-18" freq="30" file="loops.out"/>
+</additional>

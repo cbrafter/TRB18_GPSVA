@@ -1,0 +1,4 @@
+<junction id="2" offset="0">
+	<stage id="1" controlString="rG" period="30"/>
+	<stage id="3" controlString="Gr" period="30"/>
+</junction>

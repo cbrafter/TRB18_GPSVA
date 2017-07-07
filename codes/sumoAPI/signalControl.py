@@ -22,10 +22,10 @@ class signalControl(object):
         return traci.simulation.getCurrentTime()
     
     def setAmberTime(self, time):
-            self.transitionObject.setAmberTime(time)
+        self.transitionObject.setAmberTime(time)
         
     def setAllRedTime(self, time):
-            self.transitionObject.setAllRedTime(time)
+        self.transitionObject.setAllRedTime(time)
     
     
 class stageTransition(object):
@@ -62,14 +62,15 @@ class stageTransition(object):
             
             self.targetStageString = targetStageString
             self.junctionID = junctionID
-            self.transitionStart = self.getCurrentSUMOtime()
+            self.transitionStart = traci.simulation.getCurrentTime()
             self.active = True
             
         def processTransition(self):             
             if self.active:
-                if (self.getCurrentSUMOtime() - self.transitionStart) < (self.amberTime*1000):
+                simTime = traci.simulation.getCurrentTime()
+                if (simTime - self.transitionStart) < (self.amberTime*1000):
                     traci.trafficlights.setRedYellowGreenState(self.junctionID, self.amberStageString)
-                elif (self.getCurrentSUMOtime()- self.transitionStart) < ((self.amberTime + self.allRed)*1000):
+                elif (simTime - self.transitionStart) < ((self.amberTime + self.allRed)*1000):
                     traci.trafficlights.setRedYellowGreenState(self.junctionID, self.allRedStageString)
                 else:
                     traci.trafficlights.setRedYellowGreenState(self.junctionID, self.targetStageString)

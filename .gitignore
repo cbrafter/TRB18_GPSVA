@@ -22,6 +22,6 @@ codes/mainCode/old/
 codes/mainCode/data/
 codes/mainCode/simple/
 codes/mainCode/figures/
-codes/mainCode/models*_?/
+codes/mainCode/models/*_?/
 *.vtk
 *.pdf

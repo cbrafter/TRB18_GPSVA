@@ -8,7 +8,7 @@ class for fixed time signal control
 
 """
 import signalControl, readJunctionData, traci
-from math import atan2, degrees, hypot
+from math import atan2, degrees
 import numpy as np
 from collections import defaultdict
 
@@ -16,8 +16,8 @@ class HybridVAControl(signalControl.signalControl):
     def __init__(self, junctionData, minGreenTime=10, maxGreenTime=60, scanRange=250, packetRate=0.2):
         super(HybridVAControl, self).__init__()
         self.junctionData = junctionData
-        self.firstCalled = traci.simulation.getCurrentTime()
-        self.lastCalled = self.firstCalled
+        self.firstCalled = self.getCurrentSUMOtime()
+        self.lastCalled = self.getCurrentSUMOtime()
         self.lastStageIndex = 0
         traci.trafficlights.setRedYellowGreenState(self.junctionData.id, 
             self.junctionData.stages[self.lastStageIndex].controlString)
@@ -29,7 +29,6 @@ class HybridVAControl(signalControl.signalControl):
         self.newVehicleInfo = {}
         self.oldVehicleInfo = {}
         self.scanRange = scanRange
-        self.jcnPosition = np.array(traci.junction.getPosition(self.junctionData.id))
         self.jcnCtrlRegion = self._getJncCtrlRegion()
         # print(self.junctionData.id)
         # print(self.jcnCtrlRegion)
@@ -44,15 +43,10 @@ class HybridVAControl(signalControl.signalControl):
         self.extendTime = 1.0 # 5 m in 10 m/s (acceptable journey 1.333)
         self.laneInductors = self._getLaneInductors()
 
-        self.TIME_MS = self.firstCalled
-        self.TIME_SEC = 0.001 * self.TIME_MS
-
     def process(self):
-        self.TIME_MS = traci.simulation.getCurrentTime()
-        self.TIME_SEC = 0.001 * self.TIME_MS
         # Packets sent on this step
         # packet delay + only get packets towards the end of the second
-        if (not self.TIME_MS % self.packetRate) and (not 50 < self.TIME_MS % 1000 < 650):
+        if (not self.getCurrentSUMOtime() % self.packetRate) and (self.getCurrentSUMOtime() % 1000 > 500):
             self.CAMactive = True
             self._getCAMinfo()
         else:
@@ -60,9 +54,11 @@ class HybridVAControl(signalControl.signalControl):
 
         # Update stage decisions
         # If there's no ITS enabled vehicles present use VA ctrl
-        if len(self.oldVehicleInfo) < 1 and not self.TIME_MS % 1000:
+        if len(self.oldVehicleInfo) < 1 and not self.getCurrentSUMOtime() % 1000:
             detectTimePerLane = self._getLaneDetectTime()
+            #print(detectTimePerLane)
             # Set adaptive time limit
+            #print(detectTimePerLane < 3)
             if np.any(detectTimePerLane < 2):
                 extend = self.extendTime
             else:
@@ -71,7 +67,7 @@ class HybridVAControl(signalControl.signalControl):
             self.stageTime = max(self.stageTime + extend, self.minGreenTime)
             self.stageTime = min(self.stageTime, self.maxGreenTime)
         # If active and on the second, or transition then make stage descision
-        elif (self.CAMactive and not self.TIME_MS % 1000) or self.transition:
+        elif (self.CAMactive and not self.getCurrentSUMOtime() % 1000) or self.transition:
             oncomingVeh = self._getOncomingVehicles()
             # If new stage get furthest from stop line whose velocity < 5% speed
             # limit and determine queue length
@@ -95,13 +91,14 @@ class HybridVAControl(signalControl.signalControl):
                         meteredTime = nearestVeh[1]/self.oldVehicleInfo[nearestVeh[0]][2]
                     else:
                         meteredTime = self.secondsPerMeterTraffic*nearestVeh[1]
-                    elapsedTime = 0.001*(self.TIME_MS - self.lastCalled)
+                    elapsedTime = 0.001*(self.getCurrentSUMOtime() - self.lastCalled)
                     Tremaining = self.stageTime - elapsedTime
                     self.stageTime = elapsedTime + max(meteredTime, Tremaining)
                     self.stageTime = min(self.stageTime, self.maxGreenTime)
                 # no detectable near vehicle try inductive loop info
                 elif nearestVeh == '' or nearestVeh[1] <= self.nearVehicleCatchDistance:
                     detectTimePerLane = self._getLaneDetectTime()
+                    print('Loops2')
                     # Set adaptive time limit
                     if np.any(detectTimePerLane < 2):
                         extend = self.extendTime
@@ -121,10 +118,10 @@ class HybridVAControl(signalControl.signalControl):
         if self.transitionObject.active:
             # If the transition object is active i.e. processing a transition
             pass
-        elif (self.TIME_MS - self.firstCalled) < (self.junctionData.offset*1000):
+        elif (self.getCurrentSUMOtime() - self.firstCalled) < (self.junctionData.offset*1000):
             # Process offset first
             pass
-        elif (self.TIME_MS - self.lastCalled) < self.stageTime*1000:
+        elif (self.getCurrentSUMOtime() - self.lastCalled) < self.stageTime*1000:
             # Before the period of the next stage
             pass
         else:
@@ -138,13 +135,15 @@ class HybridVAControl(signalControl.signalControl):
                 self.lastStageIndex += 1
             else:
                 # Proceed to next stage
+                #print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
                 self.transitionObject.newTransition(
                     self.junctionData.id, 
                     self.junctionData.stages[self.lastStageIndex].controlString,
                     self.junctionData.stages[0].controlString)
                 self.lastStageIndex = 0
 
-            self.lastCalled = self.TIME_MS
+            #print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
+            self.lastCalled = self.getCurrentSUMOtime()
             self.transition = True
             self.stageTime = 0.0
 
@@ -207,8 +206,10 @@ class HybridVAControl(signalControl.signalControl):
         return ctrlRegion
 
 
-    def _isInRange(self, vehPosition):
-        distance = np.linalg.norm(vehPosition - self.jcnPosition)
+    def _isInRange(self, vehID):
+        vehPosition = np.array(traci.vehicle.getPosition(vehID))
+        jcnPosition = np.array(traci.junction.getPosition(self.junctionData.id))
+        distance = np.linalg.norm(vehPosition - jcnPosition)
         if (distance < self.scanRange 
             and self.jcnCtrlRegion['W'] <= vehPosition[0] <= self.jcnCtrlRegion['E']
             and self.jcnCtrlRegion['S'] <= vehPosition[1] <= self.jcnCtrlRegion['N']):
@@ -234,10 +235,10 @@ class HybridVAControl(signalControl.signalControl):
     def _getCAMinfo(self):
         self.oldVehicleInfo = self.newVehicleInfo.copy()
         self.newVehicleInfo = {}
-        Tdetect = self.TIME_SEC
+        Tdetect = 0.001*self.getCurrentSUMOtime()
         for vehID in traci.vehicle.getIDList():
-            vehPosition = traci.vehicle.getPosition(vehID)
-            if traci.vehicle.getTypeID(vehID) == 'typeITSCV' and self._isInRange(vehPosition):
+            if traci.vehicle.getTypeID(vehID) == 'typeITSCV' and self._isInRange(vehID):
+                vehPosition = traci.vehicle.getPosition(vehID)
                 vehHeading = traci.vehicle.getAngle(vehID)
                 vehVelocity = self._getVelocity(vehID, vehPosition, Tdetect)
                 self.newVehicleInfo[vehID] = [vehPosition, vehHeading, vehVelocity, Tdetect]
@@ -311,10 +312,11 @@ class HybridVAControl(signalControl.signalControl):
     def _getFurthestStationaryVehicle(self, vehIDs):
         furthestID = ''
         maxDistance = -1
+        jcnPosition = np.array(traci.junction.getPosition(self.junctionData.id))
         speedLimit = traci.lane.getMaxSpeed(self._getActiveLanes()[0])
         for ID in vehIDs:
             vehPosition = np.array(self.oldVehicleInfo[ID][0])
-            distance = np.linalg.norm(vehPosition - self.jcnPosition)
+            distance = np.linalg.norm(vehPosition - jcnPosition)
             if distance > maxDistance and self.oldVehicleInfo[ID][2] < 0.05*speedLimit:
                 furthestID = ID
                 maxDistance = distance
@@ -325,10 +327,11 @@ class HybridVAControl(signalControl.signalControl):
     def _getNearestVehicle(self, vehIDs):
         nearestID = ''
         minDistance = self.nearVehicleCatchDistance + 1
+        jcnPosition = np.array(traci.junction.getPosition(self.junctionData.id))
         
         for ID in vehIDs:
             vehPosition = np.array(self.oldVehicleInfo[ID][0])
-            distance = np.linalg.norm(vehPosition - self.jcnPosition)
+            distance = np.linalg.norm(vehPosition - jcnPosition)
             if distance < minDistance:
                 nearestID = ID
                 minDistance = distance

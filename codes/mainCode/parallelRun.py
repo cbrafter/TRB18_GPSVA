@@ -17,6 +17,7 @@ sys.path.insert(0, '../sumoAPI')
 import GPSControl
 import fixedTimeControl
 import actuatedControl
+import HybridVAControl
 import sumoConnect
 import readJunctionData
 print(sys.path)
@@ -32,14 +33,15 @@ def simulation(x):
         procID = int(mp.current_process().name[-1])
         model = './models/{}_{}/'.format(modelName, procID)
         simport = 8812 + procID
-        N = 50  # Last time to insert vehicle at
+        N = 10000  # Last time to insert vehicle at
         stepSize = 0.1
         CAVtau = 1.0
         configFile = model + modelName + ".sumocfg"
         # Configure the Map of controllers to be run
         tlControlMap = {'fixedTime': fixedTimeControl.fixedTimeControl,
                         'VA': actuatedControl.actuatedControl,
-                        'GPSVA': GPSControl.GPSControl}
+                        'GPSVA': GPSControl.GPSControl,
+                        'HVA': HybridVAControl.HybridVAControl}
         tlController = tlControlMap[tlLogic]
 
         exportPath = '/hardmem/results/' + tlLogic + '/' + modelName + '/'
@@ -52,8 +54,11 @@ def simulation(x):
         if not os.path.exists(exportPath):
             os.makedirs(exportPath)
 
+        #seed = int(sum([ord(X) for x in modelName + tlLogic]) + int(10*CAVratio) + run)
+        seed = int(sum([ord(c) for c in modelName + tlLogic]) + run)
         vehNr, lastVeh = routeGen(N, CAVratio, CAVtau,
-                                  routeFile=model + modelName + '.rou.xml')
+                                  routeFile=model + modelName + '.rou.xml',
+                                  seed=seed)
 
         # Edit the the output filenames in sumoConfig
         sumoConfigGen(modelName, configFile, exportPath,
@@ -103,7 +108,8 @@ def simulation(x):
 ################################################################################
 configs = []
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
-tlControllers = ['fixedTime', 'VA', 'GPSVA']
+#tlControllers = ['fixedTime', 'VA', 'GPSVA', 'HVA']
+tlControllers = ['fixedTime', 'HVA']
 CAVratios = np.linspace(0, 1, 11)
 if len(sys.argv) >=3:
     runArgs = sys.argv[1:3]
@@ -136,6 +142,7 @@ nproc = np.mean([psutil.cpu_count(),
 # define work pool
 workpool = mp.Pool(processes=nproc)
 # Run simualtions in parallel
+print('Starting simulation on {} cores'.format(nproc))
 result = workpool.map(simulation, configs, chunksize=1)
 # remove spawned model copies
 for rmdir in glob('./models/*_?'):

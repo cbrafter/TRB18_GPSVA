@@ -40,6 +40,7 @@ class fixedTimeControl(signalControl.signalControl):
                 self.lastStageIndex += 1
             else:
                 # Proceed to next stage
+                #print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
                 self.transitionObject.newTransition(
                     self.junctionData.id, 
                     self.junctionData.stages[self.lastStageIndex].controlString,

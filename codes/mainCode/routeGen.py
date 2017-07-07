@@ -26,9 +26,11 @@ def routeStr(vehNr, CFmodel, heading, Tdepart):
     return '    <' + vID + vtype + route + depart + '/>'
 
 
-def routeGen(N, AVratio=0, AVtau=0.1, routeFile='./simpleT.rou.xml'): 
+def routeGen(N, AVratio=0, AVtau=0.1, routeFile='./simpleT.rou.xml', seed=None): 
     assert 0.0 <= AVratio <= 1.0, "Error: AVratio not between 0,1"
     assert '.rou.xml' == routeFile[-8:], "Error: Wrong route file extension"
+
+    random.seed(seed)
 
     # Open routefile for writing
     routes = open(routeFile, "w")

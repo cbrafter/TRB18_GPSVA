@@ -16,8 +16,8 @@ class HybridVAControl(signalControl.signalControl):
     def __init__(self, junctionData, minGreenTime=10, maxGreenTime=60, scanRange=250, packetRate=0.2):
         super(HybridVAControl, self).__init__()
         self.junctionData = junctionData
-        self.firstCalled = traci.simulation.getCurrentTime()
-        self.lastCalled = self.firstCalled
+        self.firstCalled = self.getCurrentSUMOtime()
+        self.lastCalled = self.getCurrentSUMOtime()
         self.lastStageIndex = 0
         traci.trafficlights.setRedYellowGreenState(self.junctionData.id, 
             self.junctionData.stages[self.lastStageIndex].controlString)
@@ -44,11 +44,11 @@ class HybridVAControl(signalControl.signalControl):
         self.extendTime = 1.0 # 5 m in 10 m/s (acceptable journey 1.333)
         self.laneInductors = self._getLaneInductors()
 
-        self.TIME_MS = self.firstCalled
+        self.TIME_MS = self.getCurrentSUMOtime()
         self.TIME_SEC = 0.001 * self.TIME_MS
 
     def process(self):
-        self.TIME_MS = traci.simulation.getCurrentTime()
+        self.TIME_MS = self.getCurrentSUMOtime()
         self.TIME_SEC = 0.001 * self.TIME_MS
         # Packets sent on this step
         # packet delay + only get packets towards the end of the second
@@ -62,7 +62,9 @@ class HybridVAControl(signalControl.signalControl):
         # If there's no ITS enabled vehicles present use VA ctrl
         if len(self.oldVehicleInfo) < 1 and not self.TIME_MS % 1000:
             detectTimePerLane = self._getLaneDetectTime()
+            #print(detectTimePerLane)
             # Set adaptive time limit
+            #print(detectTimePerLane < 3)
             if np.any(detectTimePerLane < 2):
                 extend = self.extendTime
             else:
@@ -138,12 +140,14 @@ class HybridVAControl(signalControl.signalControl):
                 self.lastStageIndex += 1
             else:
                 # Proceed to next stage
+                #print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
                 self.transitionObject.newTransition(
                     self.junctionData.id, 
                     self.junctionData.stages[self.lastStageIndex].controlString,
                     self.junctionData.stages[0].controlString)
                 self.lastStageIndex = 0
 
+            #print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
             self.lastCalled = self.TIME_MS
             self.transition = True
             self.stageTime = 0.0

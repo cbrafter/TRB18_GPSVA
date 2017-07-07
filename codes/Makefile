@@ -4,7 +4,7 @@ VMNAME = sumovm
 ESCPATH = $(shell printf "%q\n" "$(shell pwd)")
 UESCPATH = $(shell pwd | sed -e 's/ /\\ /g' -e 's/\[/\\\[/g' -e 's/\]/\\\]/g')
 START ?= 1
-END ?= 10
+END ?= 16
 
 build:
 	docker build -t $(VMNAME) .
@@ -50,4 +50,3 @@ prune:
 	docker container prune
 	docker volume prune
 	docker image prune
-

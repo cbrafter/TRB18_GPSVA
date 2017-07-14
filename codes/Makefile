@@ -9,7 +9,7 @@ END ?= 16
 build:
 	docker build -t $(VMNAME) .
 
-ubuntu:
+ubuntu: 
 	docker run \
 		-v /hardmem/results_TRB2/:/hardmem/results/ \
 		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \

@@ -108,8 +108,8 @@ def simulation(x):
 # MAIN SIMULATION DEFINITION
 ################################################################################
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
-#tlControllers = ['fixedTime', 'VA', 'GPSVA', 'HVA']
-tlControllers = ['fixedTime', 'VA', 'HVA', 'GPSVA']
+#tlControllers = ['fixedTime', 'VA', 'HVA', 'GPSVA']
+tlControllers = ['VA', 'HVA']
 CAVratios = np.linspace(0, 1, 11)
 if len(sys.argv) >=3:
     runArgs = sys.argv[1:3]
@@ -121,24 +121,11 @@ else:
 
 runIDs = np.arange(runStart, runEnd)
 
-# Generate all simulation configs for fixed time and VA 
-# for model in models:
-#     for tl in tlControllers[:2]:
-#         for run in runIDs:
-#             configs.append([model, tl, 0., run])
-
-# # Generate runs for CAV dependent controllers
-# for model in models:
-#     for tl in tlControllers[2:]:
-#         for ratio in CAVratios:
-#             for run in runIDs:
-#                 configs.append([model, tl, ratio, run])
-
 configs = []
 # Generate all simulation configs for fixed time and VA 
-configs += list(itertools.product(model, tlControllers[:2], [0.], runIDs))
+configs += list(itertools.product(models, ['VA'], [0.], runIDs))
 # # Generate runs for CAV dependent controllers
-configs += list(itertools.product(model, tlControllers[2:], CAVratios, runIDs))
+configs += list(itertools.product(models, ['HVA'], CAVratios, runIDs))
 print(len(configs))
 
 # define number of processors to use (avg of logical and physical cores)

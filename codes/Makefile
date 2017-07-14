@@ -11,11 +11,19 @@ build:
 
 ubuntu:
 	docker run \
-		-v /hardmem/results_TRB/:/hardmem/results/ \
+		-v /hardmem/results_TRB2/:/hardmem/results/ \
 		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \
 		-v $(UESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
 		-w /simulation/mainCode \
 		$(VMNAME) python parallelRun.py $(START) $(END)
+
+ubuntu_special:
+	docker run \
+		-v /hardmem/results_TRB2/:/hardmem/results/ \
+		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \
+		-v $(UESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
+		-w /simulation/mainCode \
+		$(VMNAME) python ParallelSpecial.py $(START) $(END)
 
 mac:
 	docker run \
@@ -26,7 +34,6 @@ mac:
 		$(VMNAME) python parallelRun.py $(START) $(END)
 
 test_ubuntu:
-	echo $(ESCPATH)
 	docker run \
 		-v /hardmem/results_jun17/:/hardmem/results/ \
 		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \

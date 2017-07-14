@@ -5,14 +5,14 @@
         <additional-files value="corridor.det.xml"/>
     </input>
     <output>
-        <!--<summary-output value="/hardmem/results/spatctrl_ft/corridor/summary100_003.xml"/>-->
-        <tripinfo-output value="/hardmem/results/spatctrl_ft/corridor/tripinfo100_003.xml"/>
-        <!--<vehroute-output value="/hardmem/results/spatctrl_ft/corridor/vehroute100_003.xml"/-->
-        <queue-output value="/hardmem/results/spatctrl_ft/corridor/queuedata100_003.xml"/>
+        <!--<summary-output value="../../simple/summary010_000.xml"/>-->
+        <tripinfo-output value="../../simple/tripinfo010_000.xml"/>
+        <!--<vehroute-output value="../../simple/vehroute010_000.xml"/-->
+        <queue-output value="../../simple/queuedata010_000.xml"/>
     </output>
     <time>
         <begin value="0"/>
-        <step-length value="0.1"/>
+        <step-length value="0.01"/>
     </time>
     <processing>
         <!--TURN OFF TELEPORTING-->

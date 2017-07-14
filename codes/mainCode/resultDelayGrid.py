@@ -32,18 +32,19 @@ def setsavefig(figure, lgnd, filepath):
 	padding = 0.1
 	#figure.savefig(filepath+'.png', dpi=dpiVal, bbox_inches='tight', pad_inches=padding)
 	figure.savefig(filepath+'.eps', dpi=dpiVal, bbox_extra_artists=(lgnd,), bbox_inches='tight', pad_inches=padding)
+	figure.savefig(filepath+'.pdf', dpi=dpiVal, bbox_extra_artists=(lgnd,), bbox_inches='tight', pad_inches=padding)
 
 
 def IQR(data, qrange=75):
     return (np.percentile(data, qrange), np.percentile(data, 100-qrange))
 
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
-controllers = ['fixed', 'actuated', 'gpsctrl']
+controllers = ['fixedTime', 'VA', 'GPSVA', 'HVA']
 
 modDict = {'simpleT':'Simple-T', 'twinT':'Twin-T', 'corridor':'Corridor', 'manhattan':'Manhattan'}
-limDict = {'simpleT':[[18, 35],[0,100], 1, 10], 'twinT':[[0,1050], [0,1000], 100, 100], 
-	'corridor':[[60,150], [0,800], 10, 100], 'manhattan':[[80,200], [0,900], 10, 100]}
-ctrlDict={'fixed':'FT', 'actuated':'VA', 'gpsctrl':'GPS-VA', 'spatctrl_va':'SPaT-VA'}
+limDict = {'simpleT':[[18, 30],[0,100], 1, 10], 'twinT':[[0,1100], [0,1000], 100, 100], 
+	'corridor':[[60,100], [0,800], 10, 100], 'manhattan':[[80,210], [0,900], 10, 100]}
+ctrlDict={'fixedTime':'FT', 'VA':'VA', 'GPSVA':'GPS-VA', 'HVA':'HVA'}
 
 # Run index and AV ration definitions
 runs = np.arange(1, 16)
@@ -51,11 +52,10 @@ AVratios = np.linspace(0, 1, 11)
 pctAVR = 100*AVratios
 SCALING = 0
 
-lineStyle = {'actuated':'^C0', 
-	'fixed':'vC2', 
-	'gpsctrl':'oC3', 
-	'spatctrl_ft':'c*', 
-	'spatctrl_va':'bs'}
+lineStyle = {'VA':'^C0', 
+	'fixedTime':'vC2', 
+	'GPSVA':'*C1', 
+	'HVA':'oC3'}
 
 def plotArr(x, y):
 	icoVec = ['o','*','x','+','s','d','v','^','<','>','p','h','D','1','2']
@@ -116,7 +116,8 @@ for i, model in enumerate(models):
 		stdTravelTimePerMeter = np.mean(stdDevTravel, 0)
 		stdDelayTravelTimePerMeter = np.mean(stdDevDelay, 0)
 
-		if controller in ['actuated', 'fixed']:
+		# Extend CAV independant mode arrays to correct length
+		if controller in ['VA', 'fixedTime']:
 			meanTravelTimePerMeter *= np.ones_like(pctAVR)
 			meanDelayTravelTimePerMeter *= np.ones_like(pctAVR)
 		
@@ -141,9 +142,9 @@ for i, model in enumerate(models):
 		sample[controller+'_'+model] = meanDelayTravelTimePerMeter[-1]
 
 print(sample)
-leg = fig.legend([x[0] for x in lines[:3]], 
-	['Fixed Time','Vehicle Actuation','GPS Vehicle Actuation'], 
-	bbox_to_anchor=(0.586, 1.16), 
+leg = fig.legend([x[0] for x in lines[:4]], 
+	['Fixed Time','Vehicle Actuation','GPS Vehicle Actuation', 'Hybrid Vehicle Actuation'], 
+	bbox_to_anchor=(0.663, 1.16), 
 	ncol=4, labelspacing=5, fontsize=tsize+2, markerscale=2)
 st = pyplot.suptitle('.', y=1.08)
 for legobj in leg.legendHandles:

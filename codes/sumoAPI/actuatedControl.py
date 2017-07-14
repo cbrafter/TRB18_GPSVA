@@ -16,22 +16,26 @@ class actuatedControl(signalControl.signalControl):
     def __init__(self, junctionData, minGreenTime=10, maxGreenTime=60, extendTime=1):
         super(actuatedControl, self).__init__()
         self.junctionData = junctionData
-        self.firstCalled = self.getCurrentSUMOtime()
-        self.lastCalled = self.getCurrentSUMOtime()
+        self.firstCalled = traci.simulation.getCurrentTime()
+        self.lastCalled = self.firstCalled
         self.lastStageIndex = 0
         traci.trafficlights.setRedYellowGreenState(self.junctionData.id, 
             self.junctionData.stages[self.lastStageIndex].controlString)
         
         self.minGreenTime = minGreenTime
         self.maxGreenTime = maxGreenTime
-        self.extendTimePerStep = extendTime*traci.simulation.getDeltaT()
+        self.extendTimePerStep = 1
         self.stageTime = 0.0
         self.controlledLanes = traci.trafficlights.getControlledLanes(self.junctionData.id)
         self.laneInductors = self._getLaneInductors()
 
+        self.TIME_MS = self.firstCalled
+        self.TIME_SEC = 0.001 * self.TIME_MS
     def process(self):
+        self.TIME_MS = traci.simulation.getCurrentTime()
+        self.TIME_SEC = 0.001 * self.TIME_MS
         # Get actuation information and make actuation decision once per second
-        if not self.getCurrentSUMOtime() % 1000:
+        if not self.TIME_MS % 1000:
             activeLanes = self._getActiveLanes()
             meanDetectTimePerLane = np.zeros(len(activeLanes))
             for i, lane in enumerate(activeLanes):
@@ -46,17 +50,17 @@ class actuatedControl(signalControl.signalControl):
             else:
                 extend = 0.0
 
-            self.stageTime = max(self.stageTime, self.minGreenTime) + extend
+            self.stageTime = max(self.stageTime + extend, self.minGreenTime)
             self.stageTime = min(self.stageTime, self.maxGreenTime)
             
             # Process light state
             if self.transitionObject.active:
                 # If the transition object is active i.e. processing a transition
                 pass
-            elif (self.getCurrentSUMOtime() - self.firstCalled) < (self.junctionData.offset*1000):
+            elif (self.TIME_MS - self.firstCalled) < (self.junctionData.offset*1000):
                 # Process offset first
                 pass
-            elif (self.getCurrentSUMOtime() - self.lastCalled) < self.stageTime*1000:
+            elif (self.TIME_MS - self.lastCalled) < self.stageTime*1000:
                 # Before the period of the next stage
                 pass
             else:
@@ -77,7 +81,7 @@ class actuatedControl(signalControl.signalControl):
                     self.lastStageIndex = 0
 
                 # print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
-                self.lastCalled = self.getCurrentSUMOtime()
+                self.lastCalled = self.TIME_MS
                 self.stageTime = 0.0
         else:
             pass

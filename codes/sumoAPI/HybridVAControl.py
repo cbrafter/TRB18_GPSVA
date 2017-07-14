@@ -302,7 +302,7 @@ class HybridVAControl(signalControl.signalControl):
 
         for loop in traci.inductionloop.getIDList():
             loopLane = traci.inductionloop.getLaneID(loop)
-            if loopLane in self.controlledLanes and 'upstream' not in loop:
+            if loopLane in self.controlledLanes:
                 laneInductors[loopLane].append(loop)
             
         return laneInductors

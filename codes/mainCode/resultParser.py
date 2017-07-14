@@ -15,7 +15,7 @@ import sys, os
 import sumoDict 
 
 
-models = ['manhattan']
+models = ['simpleT', 'twinT', 'corridor', 'manhattan']
 controller = sys.argv[1]
 
 # Run index and AV ration definitions

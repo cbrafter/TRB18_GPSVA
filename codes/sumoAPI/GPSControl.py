@@ -16,8 +16,8 @@ class GPSControl(signalControl.signalControl):
     def __init__(self, junctionData, minGreenTime=10, maxGreenTime=60, scanRange=250, packetRate=0.2):
         super(GPSControl, self).__init__()
         self.junctionData = junctionData
-        self.firstCalled = self.getCurrentSUMOtime()
-        self.lastCalled = self.getCurrentSUMOtime()
+        self.firstCalled = traci.simulation.getCurrentTime()
+        self.lastCalled = self.firstCalled
         self.lastStageIndex = 0
         traci.trafficlights.setRedYellowGreenState(self.junctionData.id, 
             self.junctionData.stages[self.lastStageIndex].controlString)
@@ -29,6 +29,7 @@ class GPSControl(signalControl.signalControl):
         self.newVehicleInfo = {}
         self.oldVehicleInfo = {}
         self.scanRange = scanRange
+        self.jcnPosition = np.array(traci.junction.getPosition(self.junctionData.id))
         self.jcnCtrlRegion = self._getJncCtrlRegion()
         # print(self.junctionData.id)
         # print(self.jcnCtrlRegion)
@@ -41,9 +42,15 @@ class GPSControl(signalControl.signalControl):
         self.secondsPerMeterTraffic = 0.45
         self.nearVehicleCatchDistance = 25
         
+        self.TIME_MS = self.firstCalled
+        self.TIME_SEC = 0.001 * self.TIME_MS
+
     def process(self):
+        self.TIME_MS = traci.simulation.getCurrentTime()
+        self.TIME_SEC = 0.001 * self.TIME_MS
+
         # Packets sent on this step
-        if not self.getCurrentSUMOtime() % self.packetRate:
+        if (not self.TIME_MS % self.packetRate) and (not 50 < self.TIME_MS % 1000 < 650):
             self.CAMactive = True
             self._getCAMinfo()
         else:
@@ -51,11 +58,11 @@ class GPSControl(signalControl.signalControl):
 
         # Update stage decisions
         # If there's no ITS enabled vehicles present use fixed-time ctrl
-        if len(self.oldVehicleInfo) < 1:
+        if len(self.oldVehicleInfo) < 1 and not self.TIME_MS % 1000:
             self.stageTime = self.minGreenTime
             #print('SET A '+ str(self.stageTime))
         # If active and on the second, or transition then make stage descision
-        elif (self.CAMactive and not self.getCurrentSUMOtime() % 1000) or self.transition:
+        elif (self.CAMactive and not self.TIME_MS % 1000) or self.transition:
             oncomingVeh = self._getOncomingVehicles()
             # If new stage get furthest from stop line whose velocity < 5% speed
             # limit and determine queue length
@@ -96,10 +103,10 @@ class GPSControl(signalControl.signalControl):
         if self.transitionObject.active:
             # If the transition object is active i.e. processing a transition
             pass
-        elif (self.getCurrentSUMOtime() - self.firstCalled) < (self.junctionData.offset*1000):
+        elif (self.TIME_MS - self.firstCalled) < (self.junctionData.offset*1000):
             # Process offset first
             pass
-        elif (self.getCurrentSUMOtime() - self.lastCalled) < self.stageTime*1000:
+        elif (self.TIME_MS - self.lastCalled) < self.stageTime*1000:
             # Before the period of the next stage
             pass
         else:
@@ -120,7 +127,7 @@ class GPSControl(signalControl.signalControl):
                 self.lastStageIndex = 0
 
             #print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
-            self.lastCalled = self.getCurrentSUMOtime()
+            self.lastCalled = self.TIME_MS
             self.transition = True
             self.stageTime = 0.0
 
@@ -183,10 +190,8 @@ class GPSControl(signalControl.signalControl):
         return ctrlRegion
 
 
-    def _isInRange(self, vehID):
-        vehPosition = np.array(traci.vehicle.getPosition(vehID))
-        jcnPosition = np.array(traci.junction.getPosition(self.junctionData.id))
-        distance = np.linalg.norm(vehPosition - jcnPosition)
+    def _isInRange(self, vehPosition):
+        distance = np.linalg.norm(vehPosition - self.jcnPosition)
         if (distance < self.scanRange 
             and self.jcnCtrlRegion['W'] <= vehPosition[0] <= self.jcnCtrlRegion['E']
             and self.jcnCtrlRegion['S'] <= vehPosition[1] <= self.jcnCtrlRegion['N']):
@@ -212,10 +217,10 @@ class GPSControl(signalControl.signalControl):
     def _getCAMinfo(self):
         self.oldVehicleInfo = self.newVehicleInfo.copy()
         self.newVehicleInfo = {}
-        Tdetect = 0.001*self.getCurrentSUMOtime()
+        Tdetect = self.TIME_SEC
         for vehID in traci.vehicle.getIDList():
-            if traci.vehicle.getTypeID(vehID) == 'typeITSCV' and self._isInRange(vehID):
-                vehPosition = traci.vehicle.getPosition(vehID)
+            vehPosition = traci.vehicle.getPosition(vehID)
+            if traci.vehicle.getTypeID(vehID) == 'typeITSCV' and self._isInRange(vehPosition):
                 vehHeading = traci.vehicle.getAngle(vehID)
                 vehVelocity = self._getVelocity(vehID, vehPosition, Tdetect)
                 self.newVehicleInfo[vehID] = [vehPosition, vehHeading, vehVelocity, Tdetect]
@@ -293,11 +298,10 @@ class GPSControl(signalControl.signalControl):
     def _getNearestVehicle(self, vehIDs):
         nearestID = ''
         minDistance = self.nearVehicleCatchDistance + 1
-        jcnPosition = np.array(traci.junction.getPosition(self.junctionData.id))
         
         for ID in vehIDs:
             vehPosition = np.array(self.oldVehicleInfo[ID][0])
-            distance = np.linalg.norm(vehPosition - jcnPosition)
+            distance = np.linalg.norm(vehPosition - self.jcnPosition)
             if distance < minDistance:
                 nearestID = ID
                 minDistance = distance

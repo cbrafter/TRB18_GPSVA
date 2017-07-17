@@ -11,7 +11,7 @@ build:
 
 ubuntu: 
 	docker run \
-		-v /hardmem/results_TRB2/:/hardmem/results/ \
+		-v /hardmem/results_TRB/:/hardmem/results/ \
 		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \
 		-v $(UESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
 		-w /simulation/mainCode \

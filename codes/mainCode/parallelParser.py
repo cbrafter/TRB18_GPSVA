@@ -29,7 +29,7 @@ def parallelParser(x):
 
     SCALING = 0
 
-    resultFolder = '/hardmem/results_TRB/'+controller+'/'+model+'/'
+    resultFolder = '/hardmem/results_TRB2/'+controller+'/'+model+'/'
     # Storage for Results
     travelData = np.zeros([runs.shape[0], AVratios.shape[0]])
     stdDevTravel = travelData.copy()
@@ -116,7 +116,7 @@ def parallelParser(x):
 
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
 tlControllers = ['fixedTime', 'VA', 'HVA', 'GPSVA']
-configs = list(itertools.product(models, tlControllers))
+configs = list(itertools.product(models, tlControllers[1:3]))
 
 workpool = mp.Pool(processes=6)
 # Run simualtions in parallel

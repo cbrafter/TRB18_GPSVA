@@ -47,6 +47,10 @@ class HybridVAControl(signalControl.signalControl):
         self.TIME_MS = self.firstCalled
         self.TIME_SEC = 0.001 * self.TIME_MS
 
+    '''def minmax(x, lower, upper):
+        return min(max(x, lower), upper)
+    '''
+
     def process(self):
         self.TIME_MS = traci.simulation.getCurrentTime()
         self.TIME_SEC = 0.001 * self.TIME_MS
@@ -95,12 +99,13 @@ class HybridVAControl(signalControl.signalControl):
                         meteredTime = nearestVeh[1]/self.oldVehicleInfo[nearestVeh[0]][2]
                     else:
                         meteredTime = self.secondsPerMeterTraffic*nearestVeh[1]
+                    
                     elapsedTime = 0.001*(self.TIME_MS - self.lastCalled)
                     Tremaining = self.stageTime - elapsedTime
                     self.stageTime = elapsedTime + max(meteredTime, Tremaining)
                     self.stageTime = min(self.stageTime, self.maxGreenTime)
                 # no detectable near vehicle try inductive loop info
-                elif nearestVeh == '' or nearestVeh[1] <= self.nearVehicleCatchDistance:
+                elif nearestVeh == '' or nearestVeh[1] > self.nearVehicleCatchDistance:
                     detectTimePerLane = self._getLaneDetectTime()
                     # Set adaptive time limit
                     if np.any(detectTimePerLane < 2):
@@ -112,42 +117,43 @@ class HybridVAControl(signalControl.signalControl):
                     self.stageTime = min(self.stageTime, self.maxGreenTime)
                 else:
                     pass
-        # process stage as normal
-        else:
-            pass
 
-        # print(self.stageTime)
-        self.transition = False
-        if self.transitionObject.active:
-            # If the transition object is active i.e. processing a transition
-            pass
-        elif (self.TIME_MS - self.firstCalled) < (self.junctionData.offset*1000):
-            # Process offset first
-            pass
-        elif (self.TIME_MS - self.lastCalled) < self.stageTime*1000:
-            # Before the period of the next stage
-            pass
-        else:
-            # Not active, not in offset, stage not finished
-            if len(self.junctionData.stages) != (self.lastStageIndex)+1:
-                # Loop from final stage to first stage
-                self.transitionObject.newTransition(
-                    self.junctionData.id, 
-                    self.junctionData.stages[self.lastStageIndex].controlString,
-                    self.junctionData.stages[self.lastStageIndex+1].controlString)
-                self.lastStageIndex += 1
+
+            # print(self.stageTime)
+            self.transition = False
+            if self.transitionObject.active:
+                # If the transition object is active i.e. processing a transition
+                pass
+            elif (self.TIME_MS - self.firstCalled) < (self.junctionData.offset*1000):
+                # Process offset first
+                pass
+            elif (self.TIME_MS - self.lastCalled) < self.stageTime*1000:
+                # Before the period of the next stage
+                pass
             else:
-                # Proceed to next stage
-                self.transitionObject.newTransition(
-                    self.junctionData.id, 
-                    self.junctionData.stages[self.lastStageIndex].controlString,
-                    self.junctionData.stages[0].controlString)
-                self.lastStageIndex = 0
+                # Not active, not in offset, stage not finished
+                if len(self.junctionData.stages) != (self.lastStageIndex)+1:
+                    # Loop from final stage to first stage
+                    self.transitionObject.newTransition(
+                        self.junctionData.id, 
+                        self.junctionData.stages[self.lastStageIndex].controlString,
+                        self.junctionData.stages[self.lastStageIndex+1].controlString)
+                    self.lastStageIndex += 1
+                else:
+                    # Proceed to next stage
+                    self.transitionObject.newTransition(
+                        self.junctionData.id, 
+                        self.junctionData.stages[self.lastStageIndex].controlString,
+                        self.junctionData.stages[0].controlString)
+                    self.lastStageIndex = 0
 
-            self.lastCalled = self.TIME_MS
-            self.transition = True
-            self.stageTime = 0.0
-
+                self.lastCalled = self.TIME_MS
+                self.transition = True
+                self.stageTime = 0.0
+            # process stage as normal
+        else:
+            pass
+            
         super(HybridVAControl, self).process()
         
 

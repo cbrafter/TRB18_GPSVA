@@ -41,6 +41,14 @@ test_ubuntu:
 		-w /simulation/mainCode \
 		$(VMNAME) python dockerTest.py $(START) $(END)
 
+test_sim_ubuntu:
+	docker run \
+		-v /hardmem/results_jun17/:/hardmem/results/ \
+		-v $(UESCPATH)/mainCode/:/simulation/mainCode/ \
+		-v $(UESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
+		-w /simulation/mainCode \
+		$(VMNAME) python ParallelSpecial.py 1 2
+
 test_mac:
 	docker run \
 		-v $(ESCPATH)/results/:/hardmem/results/ \

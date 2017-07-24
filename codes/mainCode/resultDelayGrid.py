@@ -39,12 +39,12 @@ def IQR(data, qrange=75):
     return (np.percentile(data, qrange), np.percentile(data, 100-qrange))
 
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
-controllers = ['fixedTime', 'VA', 'GPSVA', 'HVA']
+controllers = ['fixedTime', 'VA', 'GPSVA', 'HVA1','HVA']
 
 modDict = {'simpleT':'Simple-T', 'twinT':'Twin-T', 'corridor':'Corridor', 'manhattan':'Manhattan'}
 limDict = {'simpleT':[[18, 30],[0,100], 1, 10], 'twinT':[[0,1100], [0,1000], 100, 100], 
 	'corridor':[[60,100], [0,800], 10, 100], 'manhattan':[[80,210], [0,900], 10, 100]}
-ctrlDict={'fixedTime':'FT', 'VA':'VA', 'GPSVA':'GPS-VA', 'HVA':'HVA'}
+ctrlDict={'fixedTime':'FT', 'VA':'VA', 'GPSVA':'GPS-VA', 'HVA':'HVA', 'HVA1':'HVA1'}
 
 # Run index and AV ration definitions
 runs = np.arange(1, 16)
@@ -52,9 +52,10 @@ AVratios = np.linspace(0, 1, 11)
 pctAVR = 100*AVratios
 SCALING = 0
 
-lineStyle = {'VA':'^C0', 
+lineStyle = {'VA':'^k', 
 	'fixedTime':'vC2', 
 	'GPSVA':'*C1', 
+	'HVA1':'sC0', 
 	'HVA':'oC3'}
 
 def plotArr(x, y):
@@ -79,7 +80,7 @@ def plotArr(x, y):
 	for i, vec in enumerate(y):
 		pyplot.plot(x, vec, '--'+icoVec[i%len(icoVec)], color=colVec[i%len(colVec)], linewidth=1)
 
-def plotPercentile(data, scale, style='k-'):
+def plotPercentile(data, scale, style='k-', alpha_val=1):
 	if len(data.shape) == 1:
 		bands = np.percentile(data, [5, 95], axis=0)
 		bands = repmat(bands, scale.shape[0], 1).T
@@ -88,8 +89,8 @@ def plotPercentile(data, scale, style='k-'):
 	else:
 		print('This data is not a vector/2D-Matrix!')
 
-	pyplot.plot(scale, bands[0,:], style+'--', linewidth=1)
-	pyplot.plot(scale,bands[1,:], style+'--', linewidth=1)
+	pyplot.plot(scale, bands[0,:], style+'--', linewidth=1, alpha=alpha_val)
+	pyplot.plot(scale,bands[1,:], style+'--', linewidth=1, alpha=alpha_val)
 
 fig = pyplot.figure(figsize=(30, 5.5))
 # ig = pyplot.figure(figsize=(20, 15))
@@ -141,15 +142,16 @@ for i, model in enumerate(models):
 			ax.xaxis.set_ticks(np.arange(0, 110, 10))
 		sample[controller+'_'+model] = meanDelayTravelTimePerMeter[-1]
 
-print(sample)
-leg = fig.legend([x[0] for x in lines[:4]], 
-	['Fixed Time','Vehicle Actuation','GPS Vehicle Actuation', 'Hybrid Vehicle Actuation'], 
-	bbox_to_anchor=(0.663, 1.16), 
-	ncol=4, labelspacing=5, fontsize=tsize+2, markerscale=2)
-st = pyplot.suptitle('.', y=1.08)
+#print(sample)
+leg = fig.legend([x[0] for x in lines[:5]], 
+	['Fixed Time','Vehicle Actuation','GPS Vehicle Actuation', 'Hybrid Vehicle Actuation (1 Loop)', 'Hybrid Vehicle Actuation (2 Loop)'], 
+	#bbox_to_anchor=(0.663, 1.16), 
+	bbox_to_anchor=(0.8, 1.16), 
+	ncol=5, labelspacing=5, fontsize=tsize+2, markerscale=2)
+st_leg = pyplot.suptitle('.', y=1.08)
 for legobj in leg.legendHandles:
     legobj.set_linewidth(3.0)
 
-setsavefig(fig, st, './figures/delay_grid')
+setsavefig(fig, st_leg, './figures/delay_grid')
 pyplot.close(fig)
 print('~DONE~')

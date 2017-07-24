@@ -19,6 +19,7 @@ import GPSControl
 import fixedTimeControl
 import actuatedControl
 import HybridVAControl
+import HVA1
 import sumoConnect
 import readJunctionData
 print(sys.path)
@@ -42,6 +43,7 @@ def simulation(x):
         tlControlMap = {'fixedTime': fixedTimeControl.fixedTimeControl,
                         'VA': actuatedControl.actuatedControl,
                         'GPSVA': GPSControl.GPSControl,
+                        'HVA1': HVA1.HybridVA1Control,
                         'HVA': HybridVAControl.HybridVAControl}
         tlController = tlControlMap[tlLogic]
 
@@ -123,9 +125,9 @@ runIDs = np.arange(runStart, runEnd)
 
 configs = []
 # Generate all simulation configs for fixed time and VA 
-configs += list(itertools.product(models, ['VA'], [0.], runIDs))
+#configs += list(itertools.product(models, ['VA'], [0.], runIDs))
 # # Generate runs for CAV dependent controllers
-configs += list(itertools.product(models, ['HVA'], CAVratios, runIDs))
+configs += list(itertools.product(models, ['VA'], CAVratios, runIDs))
 print(len(configs))
 
 # define number of processors to use (avg of logical and physical cores)

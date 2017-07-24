@@ -24,13 +24,14 @@ class actuatedControl(signalControl.signalControl):
         
         self.minGreenTime = minGreenTime
         self.maxGreenTime = maxGreenTime
-        self.extendTimePerStep = 1
+        self.extendTimePerStep = 1.0
         self.stageTime = 0.0
         self.controlledLanes = traci.trafficlights.getControlledLanes(self.junctionData.id)
         self.laneInductors = self._getLaneInductors()
 
         self.TIME_MS = self.firstCalled
         self.TIME_SEC = 0.001 * self.TIME_MS
+        
     def process(self):
         self.TIME_MS = traci.simulation.getCurrentTime()
         self.TIME_SEC = 0.001 * self.TIME_MS
@@ -81,6 +82,7 @@ class actuatedControl(signalControl.signalControl):
                     self.lastStageIndex = 0
 
                 # print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
+                
                 self.lastCalled = self.TIME_MS
                 self.stageTime = 0.0
         else:

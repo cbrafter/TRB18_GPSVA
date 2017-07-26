@@ -111,7 +111,7 @@ def simulation(x):
 ################################################################################
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
 #tlControllers = ['fixedTime', 'VA', 'HVA', 'GPSVA']
-tlControllers = ['VA', 'HVA']
+tlControllers = ['HVA']
 CAVratios = np.linspace(0, 1, 11)
 if len(sys.argv) >=3:
     runArgs = sys.argv[1:3]
@@ -127,7 +127,7 @@ configs = []
 # Generate all simulation configs for fixed time and VA 
 #configs += list(itertools.product(models, ['VA'], [0.], runIDs))
 # # Generate runs for CAV dependent controllers
-configs += list(itertools.product(models, ['VA'], CAVratios, runIDs))
+configs += list(itertools.product(models[::-1], ['HVA', 'HVA1'], CAVratios, runIDs))
 print(len(configs))
 
 # define number of processors to use (avg of logical and physical cores)
@@ -137,7 +137,7 @@ nproc = np.mean([psutil.cpu_count(),
 
 print('Starting simulation on {} cores'.format(nproc))  
 # define work pool
-workpool = mp.Pool(processes=nproc)
+workpool = mp.Pool(processes=8)
 # Run simualtions in parallel
 result = workpool.map(simulation, configs, chunksize=1)
 # remove spawned model copies

@@ -26,9 +26,9 @@ controller = HybridVAControl.HybridVAControl
 modelname = 'simpleT'
 model = './models/{}/'.format(modelname)
 # Generate new routes
-N = 250  # Last time to insert vehicle at
+N = 100  # Last time to insert vehicle at
 stepSize = 0.1
-AVratio = 1
+AVratio = 0.5
 AVtau = 1.0
 seed = 42
 vehNr, lastVeh = routeGen(N, AVratio, AVtau, routeFile=model + modelname + '.rou.xml', seed=seed)
@@ -45,7 +45,7 @@ simport = 8813
 sumoConfigGen(modelname, configFile, exportPath, stepSize, port=simport)
 
 # Connect to model
-connector = sumoConnect.sumoConnect(model + modelname + ".sumocfg", gui=True, port=simport)
+connector = sumoConnect.sumoConnect(model + modelname + ".sumocfg", gui=False, port=simport)
 connector.launchSumoAndConnect()
 print('Model connected')
 

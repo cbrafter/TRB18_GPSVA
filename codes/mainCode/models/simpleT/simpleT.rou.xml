@@ -15,77 +15,30 @@
     
     <vehicle id="0" type="typeITSCV" route="eastWest" depart="0" />
     <vehicle id="1" type="typeITSCV" route="westSouth" depart="1" />
-    <vehicle id="2" type="typeITSCV" route="southWest" depart="2" />
+    <vehicle id="2" type="typeHuman" route="southWest" depart="2" />
     <vehicle id="3" type="typeITSCV" route="eastWest" depart="14" />
-    <vehicle id="4" type="typeITSCV" route="eastSouth" depart="16" />
+    <vehicle id="4" type="typeHuman" route="eastSouth" depart="16" />
     <vehicle id="5" type="typeITSCV" route="southWest" depart="19" />
-    <vehicle id="6" type="typeITSCV" route="eastSouth" depart="20" />
+    <vehicle id="6" type="typeHuman" route="eastSouth" depart="20" />
     <vehicle id="7" type="typeITSCV" route="eastWest" depart="21" />
     <vehicle id="8" type="typeITSCV" route="eastWest" depart="26" />
     <vehicle id="9" type="typeITSCV" route="westEast" depart="40" />
-    <vehicle id="10" type="typeITSCV" route="eastWest" depart="43" />
-    <vehicle id="11" type="typeITSCV" route="westEast" depart="46" />
+    <vehicle id="10" type="typeHuman" route="eastWest" depart="43" />
+    <vehicle id="11" type="typeHuman" route="westEast" depart="46" />
     <vehicle id="12" type="typeITSCV" route="westEast" depart="47" />
-    <vehicle id="13" type="typeITSCV" route="eastWest" depart="59" />
-    <vehicle id="14" type="typeITSCV" route="eastWest" depart="60" />
+    <vehicle id="13" type="typeHuman" route="eastWest" depart="59" />
+    <vehicle id="14" type="typeHuman" route="eastWest" depart="60" />
     <vehicle id="15" type="typeITSCV" route="eastWest" depart="63" />
     <vehicle id="16" type="typeITSCV" route="westEast" depart="66" />
-    <vehicle id="17" type="typeITSCV" route="westSouth" depart="68" />
+    <vehicle id="17" type="typeHuman" route="westSouth" depart="68" />
     <vehicle id="18" type="typeITSCV" route="westEast" depart="69" />
     <vehicle id="19" type="typeITSCV" route="westEast" depart="73" />
     <vehicle id="20" type="typeITSCV" route="southWest" depart="76" />
     <vehicle id="21" type="typeITSCV" route="eastSouth" depart="80" />
-    <vehicle id="22" type="typeITSCV" route="westSouth" depart="80" />
-    <vehicle id="23" type="typeITSCV" route="westEast" depart="82" />
+    <vehicle id="22" type="typeHuman" route="westSouth" depart="80" />
+    <vehicle id="23" type="typeHuman" route="westEast" depart="82" />
     <vehicle id="24" type="typeITSCV" route="eastSouth" depart="84" />
     <vehicle id="25" type="typeITSCV" route="westSouth" depart="86" />
-    <vehicle id="26" type="typeITSCV" route="eastWest" depart="87" />
-    <vehicle id="27" type="typeITSCV" route="eastWest" depart="95" />
-    <vehicle id="28" type="typeITSCV" route="westEast" depart="101" />
-    <vehicle id="29" type="typeITSCV" route="westEast" depart="104" />
-    <vehicle id="30" type="typeITSCV" route="eastSouth" depart="109" />
-    <vehicle id="31" type="typeITSCV" route="eastWest" depart="114" />
-    <vehicle id="32" type="typeITSCV" route="westEast" depart="117" />
-    <vehicle id="33" type="typeITSCV" route="eastWest" depart="132" />
-    <vehicle id="34" type="typeITSCV" route="eastWest" depart="136" />
-    <vehicle id="35" type="typeITSCV" route="eastWest" depart="137" />
-    <vehicle id="36" type="typeITSCV" route="westEast" depart="139" />
-    <vehicle id="37" type="typeITSCV" route="southWest" depart="140" />
-    <vehicle id="38" type="typeITSCV" route="westEast" depart="148" />
-    <vehicle id="39" type="typeITSCV" route="southWest" depart="152" />
-    <vehicle id="40" type="typeITSCV" route="westSouth" depart="154" />
-    <vehicle id="41" type="typeITSCV" route="westEast" depart="156" />
-    <vehicle id="42" type="typeITSCV" route="eastWest" depart="158" />
-    <vehicle id="43" type="typeITSCV" route="westEast" depart="159" />
-    <vehicle id="44" type="typeITSCV" route="westEast" depart="161" />
-    <vehicle id="45" type="typeITSCV" route="eastWest" depart="162" />
-    <vehicle id="46" type="typeITSCV" route="westSouth" depart="163" />
-    <vehicle id="47" type="typeITSCV" route="westSouth" depart="164" />
-    <vehicle id="48" type="typeITSCV" route="eastWest" depart="165" />
-    <vehicle id="49" type="typeITSCV" route="eastWest" depart="169" />
-    <vehicle id="50" type="typeITSCV" route="westEast" depart="170" />
-    <vehicle id="51" type="typeITSCV" route="eastSouth" depart="179" />
-    <vehicle id="52" type="typeITSCV" route="eastWest" depart="180" />
-    <vehicle id="53" type="typeITSCV" route="eastSouth" depart="181" />
-    <vehicle id="54" type="typeITSCV" route="westEast" depart="182" />
-    <vehicle id="55" type="typeITSCV" route="westEast" depart="185" />
-    <vehicle id="56" type="typeITSCV" route="westSouth" depart="186" />
-    <vehicle id="57" type="typeITSCV" route="westEast" depart="187" />
-    <vehicle id="58" type="typeITSCV" route="southWest" depart="187" />
-    <vehicle id="59" type="typeITSCV" route="eastSouth" depart="189" />
-    <vehicle id="60" type="typeITSCV" route="eastWest" depart="200" />
-    <vehicle id="61" type="typeITSCV" route="eastWest" depart="203" />
-    <vehicle id="62" type="typeITSCV" route="westEast" depart="218" />
-    <vehicle id="63" type="typeITSCV" route="westSouth" depart="219" />
-    <vehicle id="64" type="typeITSCV" route="eastWest" depart="221" />
-    <vehicle id="65" type="typeITSCV" route="southWest" depart="223" />
-    <vehicle id="66" type="typeITSCV" route="eastWest" depart="225" />
-    <vehicle id="67" type="typeITSCV" route="eastSouth" depart="227" />
-    <vehicle id="68" type="typeITSCV" route="eastWest" depart="228" />
-    <vehicle id="69" type="typeITSCV" route="westEast" depart="229" />
-    <vehicle id="70" type="typeITSCV" route="westEast" depart="234" />
-    <vehicle id="71" type="typeITSCV" route="eastWest" depart="235" />
-    <vehicle id="72" type="typeITSCV" route="eastWest" depart="236" />
-    <vehicle id="73" type="typeITSCV" route="eastWest" depart="237" />
-    <vehicle id="74" type="typeITSCV" route="westEast" depart="238" />
+    <vehicle id="26" type="typeHuman" route="eastWest" depart="87" />
+    <vehicle id="27" type="typeHuman" route="eastWest" depart="95" />
 </routes>

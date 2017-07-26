@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-@file    HybridVAControl.py
+@file    HybridVA1Control.py
 @author  Craig Rafter
 @date    19/08/2016
 
@@ -12,9 +12,9 @@ from math import atan2, degrees, hypot
 import numpy as np
 from collections import defaultdict
 
-class HybridVAControl(signalControl.signalControl):
+class HybridVA1Control(signalControl.signalControl):
     def __init__(self, junctionData, minGreenTime=10, maxGreenTime=60, scanRange=250, packetRate=0.2):
-        super(HybridVAControl, self).__init__()
+        super(HybridVA1Control, self).__init__()
         self.junctionData = junctionData
         self.firstCalled = traci.simulation.getCurrentTime()
         self.lastCalled = self.firstCalled
@@ -24,7 +24,7 @@ class HybridVAControl(signalControl.signalControl):
         
         self.packetRate = int(1000*packetRate)
         self.transition = False
-        # self.CAMactive = False
+        self.CAMactive = False
         # dict[vehID] = [position, heading, velocity, Tdetect]
         self.newVehicleInfo = {}
         self.oldVehicleInfo = {}
@@ -47,20 +47,16 @@ class HybridVAControl(signalControl.signalControl):
         self.TIME_MS = self.firstCalled
         self.TIME_SEC = 0.001 * self.TIME_MS
 
-    '''def minmax(x, lower, upper):
-        return min(max(x, lower), upper)
-    '''
-
     def process(self):
         self.TIME_MS = traci.simulation.getCurrentTime()
         self.TIME_SEC = 0.001 * self.TIME_MS
         # Packets sent on this step
         # packet delay + only get packets towards the end of the second
         if (not self.TIME_MS % self.packetRate) and (not 50 < self.TIME_MS % 1000 < 650):
-            #self.CAMactive = True
+            self.CAMactive = True
             self._getCAMinfo()
-        # else:
-        #     self.CAMactive = False
+        else:
+            self.CAMactive = False
 
         # Update stage decisions
         # If there's no ITS enabled vehicles present use VA ctrl
@@ -128,9 +124,9 @@ class HybridVAControl(signalControl.signalControl):
             if self.transitionObject.active:
                 # If the transition object is active i.e. processing a transition
                 pass
-            # elif (self.TIME_MS - self.firstCalled) < (self.junctionData.offset*1000):
-            #     # Process offset first
-            #     pass
+            elif (self.TIME_MS - self.firstCalled) < (self.junctionData.offset*1000):
+                # Process offset first
+                pass
             elif (self.TIME_MS - self.lastCalled) < self.stageTime*1000:
                 # Before the period of the next stage
                 pass
@@ -150,12 +146,12 @@ class HybridVAControl(signalControl.signalControl):
                         self.junctionData.stages[self.lastStageIndex].controlString,
                         self.junctionData.stages[0].controlString)
                     self.lastStageIndex = 0
-                #print(self.stageTime)
+
                 self.lastCalled = self.TIME_MS
                 self.transition = True
                 self.stageTime = 0.0
 
-        super(HybridVAControl, self).process()
+        super(HybridVA1Control, self).process()
         
 
     def _getHeading(self, currentLoc, prevLoc):
@@ -309,7 +305,7 @@ class HybridVAControl(signalControl.signalControl):
 
         for loop in traci.inductionloop.getIDList():
             loopLane = traci.inductionloop.getLaneID(loop)
-            if loopLane in self.controlledLanes:
+            if loopLane in self.controlledLanes and 'upstream' not in loop:
                 laneInductors[loopLane].append(loop)
             
         return laneInductors

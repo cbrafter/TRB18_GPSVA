@@ -116,7 +116,7 @@ def parallelParser(x):
 
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
 tlControllers = ['fixedTime', 'VA', 'HVA', 'HVA1', 'GPSVA']
-configs = list(itertools.product(models, tlControllers[2:4]))
+configs = list(itertools.product(models[::-1], ['HVA', 'HVA1']))
 
 workpool = mp.Pool(processes=6)
 # Run simualtions in parallel

@@ -95,8 +95,8 @@ def plotPercentile(data, scale, style='k-', alpha_val=1):
 fig = pyplot.figure(figsize=(30, 5.5))
 # ig = pyplot.figure(figsize=(20, 15))
 idLetter= ord('a') - 1
-pltID = 140
-# pltID = 220
+pltID = 140 # Line 1x4
+# pltID = 220 # Square 2x2
 lines = []
 labels = []
 sample = {}

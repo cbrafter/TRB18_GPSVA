@@ -1,0 +1,454 @@
+%
+% Transportation Research Board conference paper template
+% version 3.1 Lite
+%
+% When numbered option is activated, lines are numbered.
+\documentclass[numbered]{trbunofficial}
+\usepackage{graphicx}
+\usepackage[ruled, linesnumbered]{algorithm2e}
+\DecMargin{0.65cm}
+\SetAlCapHSkip{5pt}
+\usepackage{morefloats}
+\usepackage{color}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{breqn}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{siunitx}
+\sisetup{tight-spacing=true, free-standing-units=true, use-xspace=true, space-before-unit=true}
+\newcommand{\sidiv}{/\hspace{-1.5pt}} % if unit like m/s add divide and pull back space after second unit
+%\usepackage{nomencl}
+%\makenomenclature
+\usepackage{rotating}
+\usepackage{multirow}% http://ctan.org/pkg/multirow
+\usepackage{hhline}% http://ctan.org/pkg/hhline
+\usepackage{verbatim}
+%\usepackage[bookmarks=false]{hyperref}
+\usepackage{scrextend}
+%\usepackage{lscape}
+%\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage[font=small]{caption}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage{pdflscape}
+
+% \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+% For TRB version hide links
+\usepackage[hidelinks]{hyperref}
+
+\makeatletter
+\g@addto@macro\normalsize{%
+	\setlength\abovedisplayskip{10pt}
+	\setlength\belowdisplayskip{10pt}
+	\setlength\abovedisplayshortskip{10pt}
+	\setlength\belowdisplayshortskip{10pt}
+}
+\makeatother
+
+
+% Put here what will go to headers as author
+\AuthorHeaders{Rafter and Anvari}
+\title{A Hybrid Traffic Responsive Controller for Isolated Signalised Intersections}
+
+% TODO: add macros for easier formatting of \author.
+\author{%
+  \textbf{Craig B. Rafter}\\
+	Transportation Research Group\\
+	University of Southampton\\
+	Faculty of Engineering and the Environment\\
+	Southampton, SO16 7QF, United Kingdom\\
+	Email: c.b.rafter@soton.ac.uk\\
+  \hfill\break% this is a way to add line numbering on empty line
+  \textbf{Bani Anvari, Ph.D.}\\
+	Transportation Research Group\\
+	University of Southampton\\
+	Faculty of Engineering and the Environment\\
+	Southampton, SO16 7QF, United Kingdom\\
+	Email: b.anvari@soton.ac.uk
+}
+
+% If necessary modify the number of words per table or figure default is set to
+% 250 words per table and figure
+% \WordsPerTable{250}
+% \WordsPerFigure{250}
+
+% If words are counted manually, put that number here. This does not include
+% figures and tables. This can also be used to avoid problems with texcount
+% program i.e. if one does not have it installed.
+% \TotalWords{200}
+
+\begin{document}
+\maketitle
+
+\section{Abstract}
+
+This paper compares the performance a traffic responsive hybrid signalised intersection controller which combines vehicle GPS and inductive loop information, to fixed-time and inductive loop based controllers. 
+Traffic congestion forecasts estimate an increase of about ${60\%}$ in 2030. 
+At present, poor choice of signal timings by isolated intersection controllers cause traffic delays that have enormous negative impacts on the economy and environment. 
+Signal timings can be improved by using vehicles' GPS information to overcome the control action deficit at isolated intersections. 
+This new signal control algorithm is beneficial for traffic engineers and governmental agencies, as traffic flow can be optimised and, hence, fuel consumption and emissions decreased.
+
+Under the open European Telecommunication Standards Institute (ETSI) Cooperative Awa-reness Message (CAM) framework, a hybrid traffic responsive vehicle actuation algorithm (HVA) is proposed. HVA uses position and heading data from vehicle status broadcasts, and inferred velocity information to determine vehicle queue lengths and detect vehicles passing through the intersection. Where data from vehicle status broadcasts is sparse data from inductive loops is used. The gathered information is then used to actuate intersection signal timings.
+Microscopic simulations comparing HVA to fixed-time control and inductive loop based vehicle actuation (Loop-VA) on four urban road networks were performed to see how the proposed HVA algorithm performs compared to existing control strategies. 
+The results show that HVA is an effective alternative to traditional intersection control strategies, offering delay reductions of up to ${50\%}$ for connected vehicle fleet penetrations above ${30\%}$.
+
+\hfill\break%
+\noindent\textit{Keywords}: Intelligent Transport Systems, Traffic Control, Connected Vehicles
+\newpage
+
+\section{Introduction}\label{sec:intro}
+% Motivation
+Traffic delays are a significant problem in developed vehicle markets, costing the global economy billions of dollars in lost time and wasted energy~\cite{inrix2014}.
+% Previous Work
+Responsive control of traffic signals is one way in which traffic delays can be reduced. From simple control schemes such as fixed-time (e.g. TRANSYT~\cite{robertson69}), or vehicle actuation, to more sophisticated adaptive control schemes such as SCOOT~\cite{hunt1981} and MOVA~\cite{vincent88}, the choice of intersection control strategy is important in managing the network demand~\cite{papageorgiou2003}. 
+
+Intelligent Transport Systems (ITS) are the integration and application of communication systems, data driven control strategies, and large-scale information processing to transport systems. Many of the hypothesised traffic control schemes for ITS assume ideal communication between vehicles and infrastructure, or require the dominant presence of autonomous or connected vehicles in the network~\cite{goodall2013, Au2015, HomChaudhuri2016}. 
+
+Connected and Autonomous Vehicles (CAVs) are predicted to be introduced from 2020 onward and it will take time for the vehicle fleet to turnover~\cite{litman2016}. Therefore, there is a need for strategies that can modify existing infrastructure and support the transport network as it becomes increasingly automated. CAV centric control schemes will be needed eventually. Since vehicles are incrementally modernised, it is important that traffic control strategies adapt according to the vehicle fleet composition.
+
+In this paper, connected vehicles (CVs) are those which transmit and receive information from vehicles and infrastructure equipped with communication systems. Having multiple classes of vehicles has been shown to have negative effects on the resulting traffic flow~\cite{Ngoduy2012, Ngoduy2014}, and is taken into account.
+
+% This Work
+This paper contributes the GPS-VA algorithm which uses position and heading data from vehicle status broadcasts, and inferred velocity information to actuate signal timings. The signal timings are adjusted by predicting vehicle queue lengths in stopped lanes, and detecting vehicles passing through the junction on lanes in their green cycle. The data are transferred from the vehicles to the intersections using the IEEE 802.11p communication protocol~\cite{ieee80211p}, and the ETSI Cooperative Awareness Message (CAM) framework~\cite{EtsiCAM2011} in order to ensure interoperability among connected vehicle implementations. The proposed GPS-VA scheme is tested and compared in simulations to fixed-time control and Loop-VA on four common urban road networks (A T-junction, twin T-junction, corridor, and Manhattan grid). %The results show that GPS-VA is an effective alternative to traditional intersection control strategies, GPS-VA is a compelling alternative to traditional intersection control strategies, showing delay reductions of $10\%-50\%$ over vehicle actuation for connected vehicle penetrations exceeding $30\%$.
+
+% Contents
+This paper is organised as follows: Section~\ref{sec:bg} discusses the background literature surrounding the technologies and standards necessary to achieve GPS-VA, as well as existing intersection control strategies. In Section~\ref{sec:ctrllog} fixed-time, Loop-VA, and GPS-VA intersection control algorithms are defined. The simulation procedure used to compare the algorithm to existing methods is outlined in Section~\ref{sec:sim}, and the simulation results are presented and discussed in Section~\ref{sec:discussion}. Finally, conclusions are drawn in Section~\ref{sec:conclusion} and avenues for further research are discussed.
+
+\section{Background}\label{sec:bg}
+In order to facilitate an algorithm such as GPS-VA several technologies are required: The IEEE 802.11p communication protocol as discussed in Section~\ref{sec:wicomm}, the Global Positioning System (GPS) as outlined in Section~\ref{sec:gps}, and the ETSI Cooperative Awareness Message (CAM) is reviewed in Section~\ref{sec:cam}. Finally, previous work on communication based intersection management is summarised and the areas where GPS-VA extends the current literature are highlighted in Section \ref{sec:ctrlinfo}.
+
+\subsection{Wireless Communications}\label{sec:wicomm}
+%The IEEE 802.11 standard defines the 
+%Medium Access Control (MAC) and physical (PHY) layer %architecture of Wireless Local Area Network (WLAN) systems~\cite{ieee80211}. 
+IEEE 802.11p~\cite{ieee80211p} amends IEEE 802.11~\cite{ieee80211}, and describes the architecture for Dedicated Short-Range Communication (DSRC)~\cite{FCCDSRC03} systems in Wireless Access in Vehicular Environments (WAVE)\cite{ieee16090wave}. The DSRC specification allocates the $75\ \MHz$ frequency band centred around $5.9\GHz$ ($5.850-5.925\GHz$) for intelligent transport applications.
+
+%IEEE 802.11p uses Orthogonal Frequency Division Multiplexing (OFDM) (cf.~\cite{Li2006} for details) as its modulation scheme. 
+IEEE 802.11p wireless networks are defined for three channel widths ($20$, $10$, and $5\MHz$); however, IEEE 802.11p DSRC networks will commonly utilise a $10\MHz$ channel width~\cite{kenney11}. IEEE 802.11p
+has effective bit rates in the range $3-27\ \text{Mbps}$ as a result of using the lower $10\MHz$ channel width, and the implementation of forward error correction to increase the chance of successful decoding.
+
+%The range of 802.11p transmitters depends on local standards governing radiated emissions, but for FCC compliant~\cite{FCC03324, FCC06110} devices in the US, or devices compliant under 2006/771/EC~\cite{OJEC452006} in Europe, ranges of $1000\m$ at the recommended power outputs (approximately $25\ \text{dBm}$) are feasible. 
+Research on IEEE 802.11p networks shows that signal strength within a $250\m$ range is high enough that messages can be received correctly~\cite{msadaa2010, hameedmir2014}, and that packet latencies of approximately $50\ms$ are achievable at vehicles speeds up to $90\km\sidiv\hour$~\cite{msadaa2010}.
+
+\subsection{Global Positioning System}\label{sec:gps}
+The Global Positioning System (GPS) is a network of satellites operated by the U.S. Department of Defence. The satellites operate at two carrier frequencies %L1 ($1227.6\MHz$) and L2 ($1572.42\MHz$), 
+in the UHF band~\cite{hofmann2012}. The UHF band is used to penetrate the ionosphere and light cover (such as foliage) facilitating line-of-sight operation. 2-Dimension operation (longitude and latitude) requires line-of-of sight at least $3$ satellites, and a minimum of $4$ satellites for 3-Dimension operation (longitude, latitude, and elevation). %Civilian applications are restricted to the L1 band.
+
+%GPS satellites are synchronised via atomic clocks. Due to the difference in gravity in orbit than on earth, there is a measurable difference in the clocks on the satellites relative to an atomic clock on earth.
+GPS receivers gather position and time information from orbiting satellites and use the difference in time between its internal clock and the received times determine the device's location through trilateration. GPS resolution is typically around 5m or finer depending the number of overhead satellites and what correction techniques are implemented in the receiver~\cite{grewal01}. A map-matched position can be used to provide a more accurate position than raw GPS coordinates if spatial road network data is available to the receiver \cite{Quddus2007}. Refresh rates of $1\Hz$ is typical of commercial GPS receivers, although $5\Hz$ and $10\Hz$ receivers are available for applications such as vehicle control, where more frequent updates are required~\cite{bae2001}.
+
+\subsection{Cooperative Awareness Messages}\label{sec:cam}
+CAMs~\cite{EtsiCAM2011} provide periodic status and position information to other agents within an ITS. The ETSI CAM standard specifies ITS agents engaging in V2X (Vehicle-to-Everything) communications must be able to transmit and receive CAMs. CAMs are transmitted periodically at rates between of $1\Hz$ and $10\Hz$ and are generated if any of the following conditions are met:
+\begin{itemize}
+	\vspace{1pt}
+	\item A change in vehicle heading greater than $4^\circ$ occurs.
+	\item The vehicle's position changes by more than $5\m$. 
+	\item The vehicle is travelling at a velocity greater than $1\m\sidiv\s$.
+	\vspace{1pt}
+\end{itemize}
+CAM messages provide information to ITS agents, informing them of the positions and status of the other agents in the network, by relaying data such as longitude, latitude (degrees), and heading. The status of the ITS can be determined from information about its mobility, privacy, and physical relevancy (i.e. its state of presence on the road) from the CAM. 
+
+\subsection{Existing Intersection Control Strategies}\label{sec:ctrlinfo}
+A key area of concern for communications based control strategies is the number of CAVs present. Control strategies considering only CAVs are less complex to develop than those that consider mixed vehicle fleets. Much of the existing work focuses primarily on CAV control, providing information to vehicles to control their movements for example~\cite{Au2015, HomChaudhuri2016}. An unbiased strategy that reduces delay for all users, rather than a select few CAV users, is preferable.
+
+Work has also been done that uses GPS data for signalised intersection control. Box and Waterson~\cite{box10a} proposed an auction based algorithm, where a bid value for each lane based on the position and velocity of each vehicle on the road is used to control signal timings. The work of Goodall~\cite{goodall2013} focused on using the IntelliDrive System~\cite{smith2011} (derived from the SAE J2735 standard \cite{saej2735}). Goodall's work focused on inferring vehicle positions and queue lengths via ITS message exchange. The proposed GPS-VA algorithm adapts and extends Goodall's work by using the more accessible open access ETSI CAM standard rather than the closed access SAE J2735 standard. Additionally, instead of only using queuing information, GPS-VA incorporates dynamic vehicle tracking to better actuate the stage timings.
+
+\section{Intersection Control Strategies}\label{sec:ctrllog}
+In this section, the developed intersection control schemes are described. First, some terminology is introduced and the algorithms for the fixed-time and vehicle actuation benchmark intersection controllers are presented. An algorithm which uses GPS data to perform vehicle actuation is then proposed.
+
+% The fundamental difference between unconnected and connected vehicles (CVs) is in how they interact with infrastructure. Unconnected vehicles rely solely on the driver's immediate interpretation of their environment. In contrast, an ITS communicates additional information to and from its environment, and is able to inform not only its reaction to the current situation, but also its future decisions. The challenge is in determining whether the system should use a top-down approach, where the intersection is managed by a master controller, or a bottom-up approach, where the traffic dynamics are governed locally by each vehicle contributing to create a net effect. A combination of the two can be achieved, but the scope of the designed methods will be fundamentally limited by the standards imposed on the system.
+
+Traffic stages are defined as the traffic lights configuration at an intersection. Table~\ref{tab:tlType} defines the possible phases a traffic light can have and their meanings. Here, a stage comprises the set of traffic phases that give priority green to a single side of intersection. The side of the junction showing priority green will be referred to as the `active side', the others are considered `inactive'. Inactive lanes display permissive green on routes that are not in conflict any priority green streams, and red on streams that conflict with priority stream(s). Pedestrians are not considered so stages only account for vehicle presence.
+
+\begin{table}[htb]
+	\small
+	\centering
+	\caption{Traffic light phase definitions.\vspace{-1.0ex}}
+	\begin{tabular}{p{2.5cm}p{5.5cm} }
+		\toprule
+		\textbf{Phase} & \textbf{Description} \\ \toprule
+		Red & Vehicles must stop \\ \midrule
+		Yellow & Vehicles stop if it is safe to do so \\ \midrule
+		\multirow{2}{2.5cm}{Permissive Green} & Vehicles proceed if the road is unoccupied by vehicles in a priority green stream \\ \midrule
+		Priority Green & Vehicles proceed if it is safe to do so \\ 
+		\bottomrule
+	\end{tabular}
+	\label{tab:tlType}
+\end{table}
+
+\subsection{Existing Algorithms}
+\subsubsection{Fixed-time Control}
+Fixed-time control is the most basic form of automated signal control. Each side of the intersection is set active for a predetermined amount of time, and the controller cycles through the stages sequentially. Algorithm~\ref{alg:ft} is the pseudocode description of the fixed-time control process. Fixed-time control is relatively simple to implement but is not inherently adaptive or responsive, and cannot be optimised beyond calibrating the timings using historic traffic flow data.
+
+%The phases only define the green/red states, if a traffic light transitions from red to green or vice-versa, the light turns yellow for three seconds~\cite{theSTM2008} as an intermediates step to the transition. %The stage times usedfor fixed-time control implementation are static.
+
+\begin{algorithm}[h]
+	\caption{Fixed-Time Control Algorithm Pseudocode}
+	\label{alg:ft}
+	\SetAlgoVlined
+	\SetVlineSkip{3pt}
+	%\SetAlgoNoEnd
+	\Begin(Fixed-time control){
+		\eIf{elapsedTime $<$ stageDuration}{
+			elapsedTime $\gets$ elapsedTime$\,+\,$timeStep
+		}
+		{ 
+			\textbf{DO:} change to next traffic stage\\
+			elapsedTime $\gets$ 0
+		}
+	}
+\end{algorithm}
+\setlength{\textfloatsep}{2pt}
+
+\subsubsection{Loop Based Vehicle Actuation} \label{sec:va}
+Loop-VA uses inductive loops \cite{Yauch1990} to detect traffic and responsively adjust stage durations according to the traffic demand detected at the intersection.
+
+In this paper, a fully-actuated intersection control strategy is implemented under Federal Highways Administration Signal Timing Manual (STM)~\cite{theSTM2008} guidelines for Loop-VA. Loop-VA systems can skip stages if they do not detect vehicles in the lane(s) corresponding to those stages; however, in order to make the Loop-VA scheme comparable to the GPS-VA scheme presented in Section~\ref{sec:gpsva}, a minimum green time is defined. 
+The STM specifies that the minimum green time of between $7$ and $16\s$ for major arterial roads, and between $4$ and $10\s$ for minor arterial roads satisfies driver expectancy and queue clearance criteria for speed limits up to $50\km\sidiv\hour$. As the models used contain both minor and major arterial roads, the driver expectancy and queue clearing criteria for both road types is satisfied by a minimum green time of $10\s$.
+
+Maximum green times of $40$ to $60\s$ for major arterials, and $30$ to $50\s$ for minor arterials, are recommended on roads with speed limits up to $50\km\sidiv\hour$. As major arterials take precedence, a $60\s$ maximum green time satisfies the condition for major arterials, and does not greatly exceed the maximum green time upper limit for minor arterials.
+
+The stage green time is extended in response to vehicle flows greater than $80\%$ of the lane's saturation flow in any priority green lane. The measured saturation flow for all lanes is $S=2160\ veh/h$. Therefore, vehicle flows above $80\%$ of the saturation flow can be detected if the last detection time between the detectors is less than $2\s$ ($0.8S/3600 = 0.48\ veh\sidiv\s \mapsto\ \sim\!2\ s/veh$) and the green time can be extended if the maximum green time is not exceeded. An extend time between $0.1$ and $2\s$ is suggested by the STM based on the work of Bonneson and McCoy~\cite{bonneson2005}, so an extend time of $1\s$ is used.
+
+Algorithm~\ref{alg:va} describes the Loop-VA implementation. In practice, adaptive algorithms such as SCOOT~\cite{hunt1981} and MOVA~\cite{vincent88} are widely used to provide isolated and connected control to signalised intersections.
+
+\begin{algorithm}[h]
+	\caption{Loop-VA Algorithm Pseudocode}
+	\label{alg:va}
+	\SetAlgoVlined
+	\SetVlineSkip{3pt}
+	%\SetAlgoNoEnd
+	\Begin(Vehicle Actuation){
+		\textbf{DO:} get flow data from inductive loops\\
+		flow $\gets$ activeLaneFlow \\
+		\eIf{flow $>$ flowThreshold}{
+			stageExtendTime $\gets$ defaultExtendTime
+		}
+		{
+			stageExtendTime $\gets$ 0
+		}
+		stageDuration $\gets$ $\max(\text{stageDuration\,+\,\text{stageExtendTime}},\,\text{minGreenTime})$ \\
+		stageDuration $\gets$ $\min(\text{stageDuration},\,\text{maxGreenTime})$\\
+		\eIf{elapsedTime $<$ stageDuration}{
+			elapsedTime $\gets$ elapsedTime$\,+\,$timeStep
+		}
+		{ 
+			\textbf{DO:} change to next traffic stage\\
+			elapsedTime $\gets$ 0\\
+			stageDuration $\gets$ 0
+		}
+	}
+\end{algorithm}
+\setlength{\textfloatsep}{2pt}
+
+\subsection{GPS Based Vehicle Actuation Algorithm}\label{sec:gpsva}
+GPS-VA proposes the utilisation of GPS data extracted from CAMs broadcast by CVs to actuate signal timings. Inductive loop flow data are deliberately ignored so that the algorithm's performance relies solely on the information collected from CAMs (cf. Section~\ref{sec:cam}) communicated over a DSRC channel (cf. Section~\ref{sec:wicomm}). 
+
+Algorithm~\ref{alg:gpsva}, which describes the GPS-VA implementation, can be understood in two parts, vehicle data acquisition, and intersection control:
+
+\subsubsection{Vehicle data acquisition}
+Vehicle data acquisition determines which CAMs originate from vehicles in the junction's control region, determining the queue length on routes that are not inactive, and the locations and velocities of the vehicles on the active lane.
+
+The junction control region is defined as the $250\m$ radius surrounding the junction (area of reliable communication, cf. Section \ref{sec:wicomm}). If another junction exists inside the control region, the boundary is cropped to $10\m$ less than the conflicting junction's location. The boundary reduction ensures as large a control region as possible while allowing data from vehicles associated with other junctions to be ignored. 
+
+The junction controller receives CAMs from all vehicles inside its control region, ignoring those that are not. The CAMs are broadcast by vehicles at a rate of $10\Hz$ over a DSRC network (cf. Section \ref{sec:cam}). For these experiments, it is assumed that the junction controller receives an accurate snapshot of the network at a delay of 0.2 s. Further work may integrate a network simulation layer, such as ns-3~\cite{Riley2010}, to more accurately gauge the effects of the communication system on the algorithm's performance. The GPS position provided by the CAM updates at a rate of $10\Hz$. In future, one may implement a system that considers multiple time-scales (e.g., $1\Hz,\ 5\Hz$, and $10\Hz$ GPS).
+
+The junction controller stores data regarding the vehicle positions and headings. The vehicles' velocities can be inferred from CAM data from previous time steps, and their lanes and approaches can be inferred from their headings. The junction controller has knowledge of its own layout/map and is able to determine the headings that correspond to an approach on each of its lanes. Vehicles in range of the junction and travelling with headings matching one of the known approaches ($\pm$ a certain tolerance to allow for GPS positioning error) are considered to be approaching the junction.
+
+\subsubsection{Intersection Control}
+Inactive lane queue lengths are determined as the distance of the furthest queuing vehicle from the intersection. A vehicle is queuing if it is travelling at less than $5\%$ of the road speed limit (inferring that vehicles travelling so slowly are at or approaching the end of the queue). In this experiment, all vehicles are $5\m$ long and maintain a minimum gap of $2.5\m$, therefore their effective vehicle length is $l_{\rm eff} =7.5\m$. In the minimum green cycle of $10\s$, the vehicle flow is estimated to be $1080\ veh\sidiv\hour$ corresponding to $0.3\ veh\sidiv\s$, therefore the time to clear $1$ vehicle is $3.\dot{3}\s/veh$. As the effective vehicle length is known, the time for a vehicle to clear $1\m$ is $3.\dot{3}\ /7.5 \approx 0.45\s$. The vehicle clearance time per meter is calculated over the minimum green cycle. Therefore, the time loss due to stop-and-go wave effects~\cite{Wilson2008} resulting from finite driver reaction times is incorporated, and thus provides a slightly larger than required value. The vehicle clearance time per meter can be multiplied by the distance between the intersection and the last vehicle in the queue to get the queue clearance time.
+
+If oncoming vehicles in the active lane are within $25\m$ of the intersection, the time it will take the vehicle to reach the intersection (centre point) is added to the stage duration if it will take longer than the remaining stage time to clear the intersection (up to the maximum green time). The time for a vehicle to reach the intersection is calculated as its distance from the intersection divided by its velocity if known. Otherwise, it is calculated based on its distance from the intersection times the clearance time per meter.
+
+\begin{algorithm}[h]
+	\caption{GPS-VA Algorithm Pseudocode}
+	\label{alg:gpsva}
+	\SetAlgoVlined
+	\SetVlineSkip{3pt}
+	%\SetAlgoNoEnd
+	\SetAlCapFnt{\footnotesize}
+	\Begin(GPS-VA){
+		\textbf{DO:} get CAM data\\
+		\For{laneID $\in$ approachLaneIDs}{
+			\eIf{laneIsActive}{
+				%nearVehicleDistance $\gets$ nearestVehicleDistance\\
+				%nearVehicleSpeed $\gets$ nearestVehicleVelocity\\
+				\eIf{nearestVehicleSpeed $\ne$ NULL \textbf{and} nearestVehicleIsInRange}{
+					queueClearTime$\,\gets\,$nearestVehicleDistance $/$ nearestVehicleSpeed\\
+				}
+				{
+					queueClearTime$\,\gets\,$nearestVehicleDistance $\times$ clearTimePerMeter
+				}
+				stageDuration[laneID] $\gets$ $\max(\text{queueClearTime},\,\text{remainingTime})$\\
+				stageDuration[laneID] $\gets$ $\min(\text{stageDuration[laneID]},\,\text{maxGreenTime})$\\
+			}
+			{
+				\eIf{lastVehicleDistance $\ne$ NULL}{
+					queueClearTime $\gets$ lastVehicleDistance $\times$ clearTimePerMeter\\
+					stageDuration[laneID] $\gets$ $\max(\text{queueClearTime},\,\text{minGreenTime})$\\
+					stageDuration[laneID] $\gets$ $\min(\text{stageDuration[laneID]},\newline\text{maxGreenTime})$\\
+				}
+				{
+					stageDuration[laneID] $\gets$ minGreenTime
+				}
+			}
+		}
+		\eIf{elapsedTime $<$ stageDuration[activeLaneID]}{
+			elapsedTime $\gets$ elapsedTime$\,+\,$timeStep
+		}
+		{ 
+			\textbf{DO:} change to next traffic stage\\
+			elapsedTime $\gets$ 0\\
+			stageDuration $\gets$ 0
+		}
+	}
+\end{algorithm}
+\setlength{\textfloatsep}{5pt}
+
+\begin{algorithm}[h]
+	\caption{HVA Algorithm Pseudocode}
+	\label{alg:HVA}
+	\SetAlgoVlined
+	\SetVlineSkip{3pt}
+	%\SetAlgoNoEnd
+	\SetAlCapFnt{\footnotesize}
+	\Begin(GPS-VA){
+		\textbf{DO:} get CAM data\\
+		\For{laneID $\in$ approachLaneIDs}{
+			\uIf{laneIsActive \textbf{and} detectedCVs}{
+				%nearVehicleDistance $\gets$ nearestVehicleDistance\\
+				%nearVehicleSpeed $\gets$ nearestVehicleVelocity\\
+				\eIf{nearestVehicleSpeed $\ne$ NULL \textbf{and} nearestVehicleIsInRange}{
+					queueClearTime$\,\gets\,$nearestVehicleDistance $/$ nearestVehicleSpeed\\
+				}
+				{
+					queueClearTime$\,\gets\,$nearestVehicleDistance $\times$ clearTimePerMeter
+				}
+				stageDuration[laneID] $\gets$ $\max(\text{queueClearTime},\,\text{remainingTime})$\\
+				stageDuration[laneID] $\gets$ $\min(\text{stageDuration[laneID]},\,\text{maxGreenTime})$\\
+			}
+			\uElseIf{laneIsActive \textbf{and not} detectedCVs}{
+				\textbf{DO:} get flow data from inductive loops\\
+				flow $\gets$ activeLaneFlow \\
+				\eIf{flow $>$ flowThreshold}{
+					stageExtendTime $\gets$ defaultExtendTime
+				}
+				{
+					stageExtendTime $\gets$ 0
+				}
+				stageDuration $\gets$ $\max(\text{stageDuration\,+\,\text{stageExtendTime}},\,\text{minGreenTime})$ \\
+				stageDuration $\gets$ $\min(\text{stageDuration},\,\text{maxGreenTime})$\\
+			}
+			\Else{
+				\eIf{lastVehicleDistance $\ne$ NULL}{
+					queueClearTime $\gets$ lastVehicleDistance $\times$ clearTimePerMeter\\
+					stageDuration[laneID] $\gets$ $\max(\text{queueClearTime},\,\text{minGreenTime})$\\
+					stageDuration[laneID] $\gets$ $\min(\text{stageDuration[laneID]},\newline\text{maxGreenTime})$\\
+				}
+				{
+					stageDuration[laneID] $\gets$ minGreenTime
+				}
+			}
+		}
+		\eIf{elapsedTime $<$ stageDuration[activeLaneID]}{
+			elapsedTime $\gets$ elapsedTime$\,+\,$timeStep
+		}
+		{ 
+			\textbf{DO:} change to next traffic stage\\
+			elapsedTime $\gets$ 0\\
+			stageDuration $\gets$ 0
+		}
+	}
+\end{algorithm}
+\setlength{\textfloatsep}{5pt}
+
+\section{Simulation}\label{sec:sim}
+Here, microsimulation is used to test whether intersection management can be improved using information from standardised ITS data streams. The GPS-VA strategy is compared to the cases where intersections are managed by fixed-time and Loop-VA controllers. The simulations are performed using the \emph{SUMO} microsimulation environment~\cite{Krajzewicz2006}. The simulation is controlled using a Python API~\cite{python, traci1, box} that interfaces with \emph{SUMO} and contains four intersection models (see Figure~\ref{fig:roads}). All roads in the models operate at a $50\km\sidiv\hour$ speed limit, and the intersections contain inductive loops at $6\m$ and $18\m$ from each stop-line per UK Highways Agency standard MCE 0108~\cite{mce0108a}.
+
+\begin{figure}
+	\centering
+	\begin{tabular}{cc}
+		\includegraphics[width=0.2\paperwidth]{./pictures/simpleT2.png} &
+		\includegraphics[width=0.26\paperwidth]{./pictures/twinT.png}\\
+		\small\emph{(a)} & \small\emph{(b)} \\[0.1cm]
+		\raisebox{0.9cm}{\includegraphics[width=0.25\paperwidth]{./pictures/corridor.png}}& \includegraphics[width=0.2\paperwidth]{./pictures/manhattan.png} \\
+		\small\emph{(c)} & \small\emph{(d)} \\[0.1cm]
+	\end{tabular}
+	\vspace{-5pt}
+	\caption{The four road topologies used in the simulations. (a) Simple T-Junction, (b) Twin T-Junction, (c) Corridor, (d) Manhattan grid.}\label{fig:roads}
+\end{figure}
+
+\subsection{Car-following Parameters}
+The Krauss~\cite{Krauss1998} microscopic car-following model was chosen as it produces stable collision-free traffic flow, and is well validated. As GPS-VA depends on information from CVs, the performance of the control strategies will depend on the penetration of CVs in the fleet. In order to model increasing CV penetration, two vehicle types are defined: Unconnected vehicles which do not support ITS functionality, and CVs capable of communicating CAMs. It is assumed that CVs do not have any driving advantages over unconnected vehicles. Therefore, both vehicle types have identical car-following parameters as described in Table~\ref{tab:vtype}. The only difference between the vehicle types is that CVs can broadcast ITS CAMs. The parameters in Table~\ref{tab:vtype} are typical of a passenger car.
+
+\begin{table}[htb]
+	\small
+	\centering
+	\caption{The Krauss car-following model parameter values for both unconnected vehicles and CVs.\vspace{-1.ex}}
+	\begin{tabular}{p{0.25\textwidth} >{\centering\arraybackslash}p{0.1\textwidth}}
+		\toprule
+		\textbf{Parameter} & \textbf{Value} \\\toprule
+		Acceleration $(\m\sidiv\s^2)$ & 0.8 \\ \midrule
+		Deceleration $(\m\sidiv\s^2)$ & 4.5 \\ \midrule
+		Driver Imperfection - $\sigma$ & 0.5 \\ \midrule
+		Reaction Time - $\tau(\s)$ & 1.0 \\ \midrule
+		Length $(\m)$ & 5.0 \\ \midrule
+		Min. Gap $(\m)$ & 2.5 \\ \midrule
+		Max. Speed $(\m\sidiv\s)$ & 25 \\ 
+		\bottomrule
+	\end{tabular}
+	\label{tab:vtype}
+	%\vspace{-9pt}
+\end{table}
+
+\subsection{Traffic Generation}
+Vehicle routes are randomly generated for each simulation run based on the probability of a vehicle travelling along a given route at rates of $\sim\!\!1500\ veh/h$ for approximately $3$ hours. The vehicles are randomly assigned a type (unconnected or CV) based on a CV penetration ratio from $0$ to $1$. The CV presence in the network is incremented from $0\%$ to $100\%$ in steps of $10\%$. As the proportion of CVs and the routes are defined at random, the experiments are repeated 10 time for each CV penetration to achieve a reliable mean delay and confidence intervals.
+
+\subsection{Free-flow Travel Times}\label{sec:freeflow}
+The free-flow travel time is the base on which the delay calculations in Section~\ref{sec:discussion} are made. Free-flow travel time is established by setting all intersection lights to green and passing $50$ cars along each route in all the models. The average free-flow travel time for each route is then established. The vehicle departures are spaced in time so that the vehicles do not interact. Additional time is added between the calculation of a subsequent route's free-flow time to allow vehicles from the previous test to clear the network.
+
+\begin{figure*}[!tb]
+	\begin{center} 
+		\includegraphics[width=\textwidth]{./pictures/delay_grid.pdf}
+		\vspace{-15pt}
+		\caption{Travel-time delay for the three intersection control strategies on each of the four road networks. The solid lines denote the mean delay over all the simulation runs. The dashed lines denote the 5th and 95th percentiles of the data as an indicator of travel time variability.}
+		\label{fig:results}
+	\end{center}
+	\vspace{-5pt}
+\end{figure*}
+
+\section{Results and Discussion}\label{sec:discussion}
+The proposed GPS-VA algorithm is tested against the fixed-time and Loop-VA control algorithms on four road network models at increasing levels of CV penetration. Where CV penetration is the percentage of vehicles in the network that are CVs. Figure~\ref{fig:results} shows a comparison of the delay times for each intersection control strategy on each road model. 
+
+Travel-time delay characterises the excess time a vehicle takes to complete its journey compared to the free-flow travel time for the same journey. The simulation time $T_{\rm sim}$ is:
+\begin{equation}
+T_{\rm sim} = T_{\rm out} - T_{\rm add}
+\end{equation}
+where $T_{\rm add}$ is the time the vehicle is added to the simulation, and $T_{\rm out}$ is the time the vehicle exits the simulation. Time delay $T_{\rm Delay}$ can therefore be given by
+\begin{equation}
+T_{\rm Delay} = T_{\rm sim} - T_{\rm freeflow}
+\end{equation}	
+where $T_{\rm freeflow}$ is the time it takes the vehicle to make its journey on an unobstructed route. The free-flow travel times $T_{\rm freeflow}$ are as calculated in Section~\ref{sec:freeflow}. Delay time indicates the amount of time actually saved compared to the complete journey time, and highlights the performance limitations of each method.
+
+Figure~\ref{fig:results} shows a comparison of the delay times for each intersection control strategy on each road model. It can be seen that in all cases, the traffic responsive actuated control strategies reduce delays better than the fixed-time algorithm. GPS-VA degenerates to fixed-time with minimum green time cycles and performs poorly at low CV penetrations due to a control action deficit. However, at CV penetration rates exceeding $30\%$, GPS-VA reduces delay comparably to or better than the implemented Loop-VA strategy for different traffic levels. GPS-VA's poor performance at low CV penetrations suggest that future work should investigate a system that uses both inductive loop and CAM information cooperatively. The Loop-VA and fixed-time strategies do not show as large a delay difference in the corridor model as in the other three. This is due to the short road segments connecting each junction inhibiting traffic flow. A coordinated strategy is more appropriate than isolated control in this case.
+
+The reduction in delay with increasing CV penetration for GPS-VA is similar for road networks (a), (c), and (d), but much steeper for network (b). The alternative trend in the delay line on network (b) could be attributed to the proximity of the junctions, or more likely is due to the traffic demand levels applied to the network being too low to stress the junction adequately.
+
+\section{Conclusions and Future Work}\label{sec:conclusion}
+This paper explores how traffic responsive GPS based vehicle actuation can be achieved under the ETSI CAM framework. The algorithm uses position and heading data received from CV status broadcasts to actuate intersection signal timings by determining vehicle queue lengths and detecting vehicles passing through the intersection.
+
+Microscopic simulations were performed to see how the proposed GPS-VA algorithm performs compared to fixed-time and Loop-VA control strategies on four common urban road topologies. 
+The results show that GPS-VA is a compelling alternative to traditional intersection control strategies, showing delay reductions of $10\%-50\%$ over traditional Loop-VA for CV penetrations exceeding $30\%$.
+
+Algorithms that incorporate data from CVs and that consider low CV fleet penetrations are still an underdeveloped research area. Further work needs to be done on the algorithm to incorporate both GPS data and inductive loop information to increase the robustness of the algorithm at low CV penetrations. Work also needs to be done to establish the effects of errors on the GPS-VA algorithm. Communication packet loss, GPS measurement noise, and disparate GPS measurement rates all must be considered if the algorithm is to be robust in real road networks and reliably provide reduced travel times to drivers.
+
+\section{Acknowledgements}
+The authors would like to acknowledge support from the EPSRC and the Transport Research Laboratory (TRL) under Centre for Doctoral Training grant EP/L015382/1.
+
+\newpage
+
+\bibliographystyle{trb}
+\bibliography{library}
+\end{document}

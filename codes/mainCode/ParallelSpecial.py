@@ -127,8 +127,8 @@ configs = []
 # Generate all simulation configs for fixed time and VA 
 #configs += list(itertools.product(models[:1], ['VA'], [0.], runIDs))
 # # Generate runs for CAV dependent controllers
-configs += list(itertools.product(models[::-1], ['HVA', 'HVA1'], CAVratios[::-1], runIDs))
-#configs += list(itertools.product(['manhattan'], ['HVA'], [.1], [10]))
+configs += list(itertools.product(models, ['HVA', 'HVA1'], CAVratios[::-1], runIDs))
+#configs += list(itertools.product(['simpleT'], ['HVA'], [0.0,0.1,0.2,0.5,0.7], runIDs))
 #configs += list(itertools.product(['manhattan'], ['HVA1'], [.1], [7,9,11,13]))
 print(len(configs))
 

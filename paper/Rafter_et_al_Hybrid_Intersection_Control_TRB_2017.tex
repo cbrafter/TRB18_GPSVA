@@ -463,7 +463,7 @@ The HVA algorithm incorporates dynamic real-time information from CAMs received 
 				stageDuration[laneID] $\gets$ $\max(\text{queueClearTime},\,\text{remainingTime})$\\
 				stageDuration[laneID] $\gets$ $\min(\text{stageDuration[laneID]},\,\text{maxGreenTime})$\\
 			}
-			\uElseIf{laneIsActive \textbf{and not} detectedCVs}{
+			\uElseIf{laneIsActive \textbf{and not} detectedCVs \textbf{and not} stageSetByVelocityEstimationInLastStep}{
 				\textbf{DO:} get flow data from inductive loops\\
 				flow $\gets$ activeLaneFlow \\
 				\eIf{flow $>$ flowThreshold}{

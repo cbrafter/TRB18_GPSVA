@@ -127,8 +127,8 @@ for i, model in enumerate(models):
 
 		# AVR vs. Mean Travel Time + Delay Per Meter
 		ax = fig.add_subplot(pltID+idx)
-		#plotPercentile(delayData, pctAVR, lineStyle[controller])
-		lines.append(pyplot.plot(pctAVR, meanDelayTravelTimePerMeter, lineStyle[controller]+'-', linewidth=1.5, label=ctrlDict[controller]))
+		plotPercentile(delayData, pctAVR, lineStyle[controller], alpha_val=0.7)
+		lines.append(pyplot.plot(pctAVR, meanDelayTravelTimePerMeter, lineStyle[controller]+'-', linewidth=2, label=ctrlDict[controller], markersize=7))
 		labels.append(ctrlDict[controller])
 		pyplot.title(modDict[model]+': Delay vs. CV Penetration', fontsize=tsize)
 		pyplot.xlabel('Percentage CV Penetration\n({})'.format(chr(idLetter + idx)), fontsize=axsize)
@@ -142,7 +142,7 @@ for i, model in enumerate(models):
 			ax.xaxis.set_ticks(np.arange(0, 110, 10))
 		sample[controller+'_'+model] = meanDelayTravelTimePerMeter[-1]
 
-print(sample)
+#print(sample)
 leg = fig.legend([x[0] for x in lines[:5]], 
 	['Fixed Time','Vehicle Actuation','GPS Vehicle Actuation', 'Hybrid Vehicle Actuation (1 Loop)', 'Hybrid Vehicle Actuation (2 Loop)'], 
 	#bbox_to_anchor=(0.663, 1.16), 
@@ -157,4 +157,18 @@ for t in leg.texts:
 
 setsavefig(fig, st_leg, './figures/delay_grid')
 pyplot.close(fig)
+
+# Some result metrics
+k = sample.keys()
+k.sort()
+tll = ['GPSVA', 'HVA', 'HVA1']
+mods = ['simpleT','twinT','corridor','manhattan']
+for t in tll:
+	avg = 0.
+	for m in mods:
+		pct = 100*(1-sample[t+'_'+m]/sample['VA_'+m])
+		avg += pct
+		print('{}_{}: {:.2f}%'.format(t, m, pct))
+	print('MEAN {}: {:.2f}'.format(t, avg/len(mods)))
+
 print('~DONE~')

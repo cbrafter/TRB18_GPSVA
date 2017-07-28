@@ -13,7 +13,7 @@ import numpy as np
 from collections import defaultdict
 
 class HybridVAControl(signalControl.signalControl):
-    def __init__(self, junctionData, minGreenTime=10, maxGreenTime=60, scanRange=250, packetRate=0.2):
+    def __init__(self, junctionData, minGreenTime=10., maxGreenTime=60., scanRange=250, packetRate=0.2):
         super(HybridVAControl, self).__init__()
         self.junctionData = junctionData
         self.firstCalled = traci.simulation.getCurrentTime()
@@ -65,7 +65,9 @@ class HybridVAControl(signalControl.signalControl):
         # Update stage decisions
         # If there's no ITS enabled vehicles present use VA ctrl
         numCAVs = len(self.oldVehicleInfo)
-        if numCAVs < 1 and not self.TIME_MS % 1000:
+        isControlInterval = not self.TIME_MS % 1000
+        #if isControlInterval: print('CTRL')
+        if numCAVs < 1 and isControlInterval:
             detectTimePerLane = self._getLaneDetectTime()
             # Set adaptive time limit
             if np.any(detectTimePerLane < 2):
@@ -75,8 +77,9 @@ class HybridVAControl(signalControl.signalControl):
 
             self.stageTime = max(self.stageTime + extend, self.minGreenTime)
             self.stageTime = min(self.stageTime, self.maxGreenTime)
+            #print('A'+str(self.stageTime))
         # If active and on the second, or transition then make stage descision
-        elif numCAVs > 1 and not self.TIME_MS % 1000:
+        elif numCAVs >= 1 and isControlInterval:
             oncomingVeh = self._getOncomingVehicles()
             # If new stage get furthest from stop line whose velocity < 5% speed
             # limit and determine queue length
@@ -89,6 +92,7 @@ class HybridVAControl(signalControl.signalControl):
                 # If we're in this state this should never happen but just in case
                 else:
                     self.stageTime = self.minGreenTime
+                #print('B'+str(self.stageTime))
             # If currently staging then extend time if there are vehicles close 
             # to the stop line
             else:
@@ -104,7 +108,9 @@ class HybridVAControl(signalControl.signalControl):
                     elapsedTime = 0.001*(self.TIME_MS - self.lastCalled)
                     Tremaining = self.stageTime - elapsedTime
                     self.stageTime = elapsedTime + max(meteredTime, Tremaining)
+                    #self.stageTime = max(self.stageTime, self.minGreenTime)
                     self.stageTime = min(self.stageTime, self.maxGreenTime)
+                    #print('C'+str(self.stageTime))
                 # no detectable near vehicle try inductive loop info
                 elif nearestVeh == '' or nearestVeh[1] > self.nearVehicleCatchDistance:
                     detectTimePerLane = self._getLaneDetectTime()
@@ -116,6 +122,7 @@ class HybridVAControl(signalControl.signalControl):
 
                     self.stageTime = max(self.stageTime + extend, self.minGreenTime)
                     self.stageTime = min(self.stageTime, self.maxGreenTime)
+                    #print('D'+str(self.stageTime))
                 else:
                     pass
         # process stage as normal
@@ -123,7 +130,7 @@ class HybridVAControl(signalControl.signalControl):
             pass
 
         # print(self.stageTime)
-        if not self.TIME_MS % 1000:
+        if isControlInterval:
             self.transition = False
             if self.transitionObject.active:
                 # If the transition object is active i.e. processing a transition

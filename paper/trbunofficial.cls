@@ -200,14 +200,10 @@
     \hfill\break%
     \hfill\break%
     \if\@TotalWords 0
-      Word Count: \wordcount words + \total{figure} figure(s) x \@WordsPerFigure\ + \total{table} table(s) x \@WordsPerTable\ = \totalwordcount~words\\
+      Word Count: \wordcount words + \total{figure} figure(s) + \total{table} table(s) = \totalwordcount~words\\
     \else
       Word Count: \@TotalWords\ words + \total{figure} figure(s) x \@WordsPerFigure\ + \total{table} table(s) x \@WordsPerTable\ = \the\numexpr\@TotalWords + \totvalue{figure}*\@WordsPerFigure+\totvalue{table}*\@WordsPerTable~words\\
     \fi
-    \hfill\break%
-    \hfill\break%
-    \hfill\break%
-    \hfill\break%
     \hfill\break%
     \hfill\break%
     Submission Date: \today

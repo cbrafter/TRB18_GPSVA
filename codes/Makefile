@@ -33,6 +33,14 @@ mac:
 		-w /simulation/mainCode \
 		$(VMNAME) python parallelRun.py $(START) $(END)
 
+mac_special:
+	docker run \
+		-v $(ESCPATH)/results/:/hardmem/results/ \
+		-v $(ESCPATH)/mainCode/:/simulation/mainCode/ \
+		-v $(ESCPATH)/sumoAPI/:/simulation/sumoAPI/ \
+		-w /simulation/mainCode \
+		$(VMNAME) python ParallelSpecialMac.py $(START) $(END)
+
 test_ubuntu:
 	docker run \
 		-v /hardmem/results_jun17/:/hardmem/results/ \

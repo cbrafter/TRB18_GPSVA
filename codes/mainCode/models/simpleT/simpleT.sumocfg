@@ -18,6 +18,9 @@
         <!--TURN OFF TELEPORTING-->
         <time-to-teleport value="-1"/>
     </processing>
+    <random_number>
+        <seed value="10"/>
+    </random_number>
     <report>
         <no-step-log value="true"/>
         <error-log value="logfile.txt"/>

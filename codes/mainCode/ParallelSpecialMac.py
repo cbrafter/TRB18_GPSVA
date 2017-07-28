@@ -125,19 +125,12 @@ runIDs = np.arange(runStart, runEnd)
 
 configs = []
 # Generate all simulation configs for fixed time and VA 
-#configs += list(itertools.product(models[:1], ['VA'], [0.], runIDs))
+#configs += list(itertools.product(models, ['VA'], [0.], runIDs))
 # # Generate runs for CAV dependent controllers
-configs += list(itertools.product(models[::-1], ['HVA', 'HVA1'], CAVratios[::-1], runIDs))
-#configs += list(itertools.product(['manhattan'], ['HVA'], [.1], [10]))
-#configs += list(itertools.product(['manhattan'], ['HVA1'], [.1], [7,9,11,13]))
+configs += list(itertools.product(models[-1:], ['HVA'], [0.0,0.1,0.2], [10]))
 print(len(configs))
 
-# define number of processors to use (avg of logical and physical cores)
-nproc = np.mean([psutil.cpu_count(), 
-                 psutil.cpu_count(logical=False)], 
-                 dtype=int)
-
-nproc=8
+nproc = 3
 print('Starting simulation on {} cores'.format(nproc))  
 # define work pool
 workpool = mp.Pool(processes=nproc)

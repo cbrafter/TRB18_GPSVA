@@ -26,11 +26,11 @@ controller = HybridVAControl.HybridVAControl
 modelname = 'simpleT'
 model = './models/{}/'.format(modelname)
 # Generate new routes
-N = 100  # Last time to insert vehicle at
+N = 500  # Last time to insert vehicle at
 stepSize = 0.1
-AVratio = 0.5
+AVratio = 0.0
 AVtau = 1.0
-seed = 42
+seed = 10
 vehNr, lastVeh = routeGen(N, AVratio, AVtau, routeFile=model + modelname + '.rou.xml', seed=seed)
 print(vehNr, lastVeh)
 print('Routes generated')
@@ -42,7 +42,7 @@ if not os.path.exists(model+exportPath): # this is relative to script not cfg fi
     os.makedirs(model+exportPath)
 
 simport = 8813
-sumoConfigGen(modelname, configFile, exportPath, stepSize, port=simport)
+sumoConfigGen(modelname, configFile, exportPath, stepSize, port=simport, seed=seed)
 
 # Connect to model
 connector = sumoConnect.sumoConnect(model + modelname + ".sumocfg", gui=False, port=simport)

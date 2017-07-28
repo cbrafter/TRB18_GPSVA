@@ -61,7 +61,8 @@ class HybridVA1Control(signalControl.signalControl):
         # Update stage decisions
         # If there's no ITS enabled vehicles present use VA ctrl
         numCAVs = len(self.oldVehicleInfo)
-        if numCAVs < 1 and not self.TIME_MS % 1000:
+        isControlInterval = not self.TIME_MS % 1000
+        if numCAVs < 1 and isControlInterval:
             detectTimePerLane = self._getLaneDetectTime()
             # Set adaptive time limit
             if np.any(detectTimePerLane < 2):
@@ -72,7 +73,7 @@ class HybridVA1Control(signalControl.signalControl):
             self.stageTime = max(self.stageTime + extend, self.minGreenTime)
             self.stageTime = min(self.stageTime, self.maxGreenTime)
         # If active and on the second, or transition then make stage descision
-        elif numCAVs > 1 and not self.TIME_MS % 1000:
+        elif numCAVs >= 1 and isControlInterval:
             oncomingVeh = self._getOncomingVehicles()
             # If new stage get furthest from stop line whose velocity < 5% speed
             # limit and determine queue length
@@ -119,7 +120,7 @@ class HybridVA1Control(signalControl.signalControl):
             pass
 
         # print(self.stageTime)
-        if not self.TIME_MS % 1000:
+        if isControlInterval:
             self.transition = False
             if self.transitionObject.active:
                 # If the transition object is active i.e. processing a transition

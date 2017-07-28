@@ -42,8 +42,8 @@ models = ['simpleT', 'twinT', 'corridor', 'manhattan']
 controllers = ['fixedTime', 'VA', 'GPSVA', 'HVA1','HVA']
 
 modDict = {'simpleT':'Simple-T', 'twinT':'Twin-T', 'corridor':'Corridor', 'manhattan':'Manhattan'}
-limDict = {'simpleT':[[18, 30],[0,100], 1, 10], 'twinT':[[0,1100], [0,1000], 100, 100], 
-	'corridor':[[60,100], [0,800], 10, 100], 'manhattan':[[80,210], [0,900], 10, 100]}
+limDict = {'simpleT':[[18, 28],[0,100], 1, 10], 'twinT':[[0,1100], [0,1000], 100, 100], 
+	'corridor':[[65,100], [0,800], 5, 100], 'manhattan':[[80,210], [0,900], 10, 100]}
 ctrlDict={'fixedTime':'FT', 'VA':'VA', 'GPSVA':'GPS-VA', 'HVA':'HVA', 'HVA1':'HVA1'}
 
 # Run index and AV ration definitions
@@ -92,11 +92,11 @@ def plotPercentile(data, scale, style='k-', alpha_val=1):
 	pyplot.plot(scale, bands[0,:], style+'--', linewidth=1, alpha=alpha_val)
 	pyplot.plot(scale,bands[1,:], style+'--', linewidth=1, alpha=alpha_val)
 
-fig = pyplot.figure(figsize=(30, 5.5))
+fig = pyplot.figure(figsize=(20, 18))
 # ig = pyplot.figure(figsize=(20, 15))
 idLetter= ord('a') - 1
-pltID = 140 # Line 1x4
-#pltID = 220 # Square 2x2
+#pltID = 140 # Line 1x4
+pltID = 220 # Square 2x2
 lines = []
 labels = []
 sample = {}
@@ -127,7 +127,7 @@ for i, model in enumerate(models):
 
 		# AVR vs. Mean Travel Time + Delay Per Meter
 		ax = fig.add_subplot(pltID+idx)
-		plotPercentile(delayData, pctAVR, lineStyle[controller])
+		#plotPercentile(delayData, pctAVR, lineStyle[controller])
 		lines.append(pyplot.plot(pctAVR, meanDelayTravelTimePerMeter, lineStyle[controller]+'-', linewidth=1.5, label=ctrlDict[controller]))
 		labels.append(ctrlDict[controller])
 		pyplot.title(modDict[model]+': Delay vs. CV Penetration', fontsize=tsize)
@@ -142,15 +142,18 @@ for i, model in enumerate(models):
 			ax.xaxis.set_ticks(np.arange(0, 110, 10))
 		sample[controller+'_'+model] = meanDelayTravelTimePerMeter[-1]
 
-#print(sample)
+print(sample)
 leg = fig.legend([x[0] for x in lines[:5]], 
 	['Fixed Time','Vehicle Actuation','GPS Vehicle Actuation', 'Hybrid Vehicle Actuation (1 Loop)', 'Hybrid Vehicle Actuation (2 Loop)'], 
 	#bbox_to_anchor=(0.663, 1.16), 
-	bbox_to_anchor=(0.8, 1.16), 
-	ncol=5, labelspacing=5, fontsize=tsize+2, markerscale=2)
-st_leg = pyplot.suptitle('.', y=1.08)
+	bbox_to_anchor=(0.8, 0.93), 
+	ncol=3, labelspacing=1, fontsize=tsize+2, markerscale=2)
+st_leg = pyplot.suptitle('.', y=0.98)
 for legobj in leg.legendHandles:
     legobj.set_linewidth(3.0)
+
+for t in leg.texts:
+    t.set_multialignment('center')
 
 setsavefig(fig, st_leg, './figures/delay_grid')
 pyplot.close(fig)

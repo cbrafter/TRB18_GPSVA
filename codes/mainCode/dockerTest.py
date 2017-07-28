@@ -71,7 +71,7 @@ def simulation(x):
                   CAVratio, stepSize, run, simport)
 
     # Connect to model
-    connector = sumoConnect.sumoConnect(configFile, gui=False, port=simport)
+    connector = sumoConnect.sumoConnect(configFile, gui=True, port=simport)
     connector.launchSumoAndConnect()
 
     # Get junction data
@@ -105,4 +105,4 @@ def simulation(x):
                 time.strftime("%H:%M:%S", runtime)))
     return True
 
-simulation(['simpleT', 'VA', 0, 1])
+simulation(['manhattan', 'HVA', 0.1, 10])

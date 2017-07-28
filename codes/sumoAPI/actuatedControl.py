@@ -78,7 +78,7 @@ class actuatedControl(signalControl.signalControl):
                     self.lastStageIndex = 0
 
                 # print(0.001*(self.getCurrentSUMOtime() - self.lastCalled))
-                print(self.stageTime)
+                #print(self.stageTime)
                 self.lastCalled = self.TIME_MS
                 self.stageTime = 0.0
         

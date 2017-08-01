@@ -19,6 +19,7 @@ import GPSControl
 import fixedTimeControl
 import actuatedControl
 import HybridVAControl
+import HVAbias
 import HVA1
 import sumoConnect
 import readJunctionData
@@ -44,7 +45,8 @@ def simulation(x):
                         'VA': actuatedControl.actuatedControl,
                         'GPSVA': GPSControl.GPSControl,
                         'HVA1': HVA1.HybridVA1Control,
-                        'HVA': HybridVAControl.HybridVAControl}
+                        'HVA': HybridVAControl.HybridVAControl,
+                        'HVAbias': HVAbias.HVAbias}
         tlController = tlControlMap[tlLogic]
 
         exportPath = '/hardmem/results/' + tlLogic + '/' + modelName + '/'
@@ -92,7 +94,9 @@ def simulation(x):
 
         # Strip unused data from results file
         ext = '{AVR:03d}_{Nrun:03d}.xml'.format(AVR=int(CAVratio*100), Nrun=run)
-        for filename in ['queuedata', 'tripinfo']:
+        # datafiles = ['queuedata', 'tripinfo']
+        datafiles = ['tripinfo']
+        for filename in datafiles:
             target = exportPath+filename+ext
             stripXML(target)
 
@@ -127,7 +131,8 @@ configs = []
 # Generate all simulation configs for fixed time and VA 
 #configs += list(itertools.product(models[:1], ['VA'], [0.], runIDs))
 # # Generate runs for CAV dependent controllers
-configs += list(itertools.product(models, ['HVA', 'HVA1'], CAVratios[::-1], runIDs))
+#configs += list(itertools.product(models, ['HVA', 'HVA1'], CAVratios[::-1], runIDs))
+configs += list(itertools.product(models, ['HVAbias'], CAVratios[::-1], runIDs))
 #configs += list(itertools.product(['simpleT'], ['HVA'], [0.0,0.1,0.2,0.5,0.7], runIDs))
 #configs += list(itertools.product(['manhattan'], ['HVA1'], [.1], [7,9,11,13]))
 print(len(configs))

@@ -8,10 +8,11 @@
 \usepackage[ruled, linesnumbered]{algorithm2e}
 \DecMargin{0.65cm}
 \SetAlCapHSkip{5pt}
+\renewcommand{\algorithmcfname}{ALGORITHM}
 \usepackage{morefloats}
 \usepackage{color}
-\usepackage{amsfonts}
-\usepackage{amsmath}
+%\usepackage{amsfonts}
+%\usepackage{amsmath}
 \usepackage{breqn}
 \usepackage{array}
 \usepackage{tabularx}
@@ -29,6 +30,7 @@
 %\usepackage{lscape}
 %\usepackage[square,sort,comma,numbers]{natbib}
 \usepackage[font=small]{caption}
+\captionsetup{justification=raggedright,singlelinecheck=false}
 \usepackage{listings}
 \usepackage{booktabs}
 \usepackage{afterpage}
@@ -56,33 +58,39 @@
 		{\end{table}\end{landscape}}
 
 % Put here what will go to headers as author
-\AuthorHeaders{Rafter and Anvari}
-\title{Hybrid Traffic Responsive Control for\newline Isolated Signalised Intersections}
+\AuthorHeaders{Rafter, Anvari, and Box}
+%\title{Hybrid Traffic Responsive Control for\newline Isolated Signalised Intersections}
+\title{A Hybrid Traffic Responsive Intersection Control Algorithm Using GPS Data and Inductive Loop Information}
 
 % TODO: add macros for easier formatting of \author.
 \author{%
-  \textbf{Craig B. Rafter*}\\
-	Transportation Research Group\\
-	University of Southampton\\
-	Faculty of Engineering and the Environment\\
-	Southampton, SO16 7QF, United Kingdom\\
-	Email: c.b.rafter@soton.ac.uk\\
-  \hfill\break% this is a way to add line numbering on empty line
-  \hfill\break%
-  \textbf{Bani Anvari, Ph.D.}\\
-	Transportation Research Group\\
-	University of Southampton\\
-	Faculty of Engineering and the Environment\\
-	Southampton, SO16 7QF, United Kingdom\\
-	Email: b.anvari@soton.ac.uk\\
-	\hfill\break\hfill\break
+	\textbf{Craig B. Rafter*}\\
+		Postgraduate Researcher\\
+		Transportation Research Group\\
+		University of Southampton\\
+		Faculty of Engineering and the Environment\\
+		Southampton, SO16 7QF, United Kingdom\\
+		Email: c.b.rafter@soton.ac.uk\\
+	\hfill\break% this is a way to add line numbering on empty line
+	\hfill\break%
+	\textbf{Bani Anvari, Ph.D.}\\
+		Lecturer in Intelligent Mobility\\
+		Transportation Research Group\\
+		University of Southampton\\
+		Faculty of Engineering and the Environment\\
+		Southampton, SO16 7QF, United Kingdom\\
+		Email: b.anvari@soton.ac.uk\\
+	\hfill\break
+	\hfill\break
 	\textbf{Simon Box, Ph.D.}\\
-	Transportation Research Group\\
-	University of Southampton\\
-	Faculty of Engineering and the Environment\\
-	Southampton, SO16 7QF, United Kingdom\\
-	Email: s.box@soton.ac.uk\\
-	\hfill\break\hfill\break
+		Visiting Research Fellow\\
+		Transportation Research Group\\
+		University of Southampton\\
+		Faculty of Engineering and the Environment\\
+		Southampton, SO16 7QF, United Kingdom\\
+		Email: s.box@soton.ac.uk\\
+	\hfill\break
+	\hfill\break
 	\textbf{*} \emph{Corresponding author}
 }
 
@@ -104,15 +112,15 @@
 
 \section{Abstract}
 
-This paper compares the performance a traffic responsive hybrid signalised intersection controller which combines vehicle GPS and inductive loop information, to fixed-time, inductive loop, and GPS based controllers. 
-Road users spend up to 42\% of their time in congested traffic. 
-Inefficient signal timing choices by intersection controllers contribute to traffic delays, causing severe negative impacts on the economy and environment. 
+This paper compares the performance a traffic responsive intersection controller which combines vehicle GPS data and inductive loop information, to fixed-time, inductive loop, and GPS based controllers. 
+The INRIX Global Traffic Scorecard reports that road users spent up to $42\%$ of their time in congested traffic in 2016. 
+Inefficient signal timing choices by isolated intersection controllers contribute to traffic delays, causing severe negative impacts on the economy and environment. 
 Signal timings can be improved using vehicles' GPS information combined with vehicle flow information from inductive loops to overcome the control action deficit at isolated intersections. 
 This new signal control algorithm is beneficial for traffic engineers and governmental agencies, as traffic flow can be optimised, therefore, reducing fuel consumption and emissions.
 
-Under the open European Telecommunication Standards Institute (ETSI) Cooperative Awareness Message (CAM) framework, a traffic responsive Hybrid Vehicle Actuation algorithm (HVA) is proposed. HVA uses position and heading data from vehicle status broadcasts, and inferred velocity information to determine vehicle queue lengths and detect vehicles passing through the intersection. When vehicle broadcast data are unavailable, inductive loop data are used. The gathered information is used to actuate intersection signal timings.
+This paper proposes a traffic responsive Hybrid Vehicle Actuation algorithm (HVA). HVA uses position and heading data from vehicle status broadcasts, and inferred velocity information to determine vehicle queue lengths and detect vehicles passing through the intersection actuate intersection signal timings. When vehicle broadcast data are unavailable, HVA attempts to use inductive loop data.
 Microscopic simulations comparing HVA to fixed-time control, inductive loop based vehicle actuation (Loop-VA) and GPS based vehicle actuation (GPS-VA) on four urban road networks were performed to see how the proposed HVA algorithm performs compared to existing control strategies. 
-The results show that HVA is an effective alternative to traditional intersection control strategies, offering delay reductions of up to ${50\%}$ over Loop-VA.
+The results show that HVA is an effective alternative to traditional intersection control strategies, offering delay reductions of up to ${32\%}$ over Loop-VA, for networks with $0-100\%$ connected vehicle presence.
 
 \hfill\break%
 \noindent\textit{Keywords}: Intelligent Transport Systems, Traffic Control, Connected Vehicles
@@ -332,7 +340,7 @@ Fixed-time control is the most basic form of automated signal control. Each side
 		}
 	}
 \end{algorithm}
-\setlength{\textfloatsep}{2pt}
+%\setlength{\textfloatsep}{2pt}
 
 \subsubsection{Loop Based Vehicle Actuation} \label{sec:va}
 Loop-VA uses inductive loops \cite{Yauch1990} to detect traffic and responsively adjust stage durations according to the traffic demand detected at the intersection.
@@ -373,19 +381,19 @@ Algorithm~\ref{alg:va} describes the Loop-VA implementation. In practice, adapti
 		}
 	}
 \end{algorithm}
-\setlength{\textfloatsep}{2pt}
+%\setlength{\textfloatsep}{2pt}
 
 \subsection{GPS Based Vehicle Actuation Algorithm}\label{sec:gpsva}
-GPS-VA proposes the utilisation of GPS data extracted from CAMs broadcast by CVs to actuate signal timings. Inductive loop flow data are deliberately ignored so that the algorithm's performance relies solely on the information collected from CAMs (cf. Section~\ref{sec:cam}) communicated over a DSRC channel (cf. Section~\ref{sec:wicomm}). 
+GPS-VA proposes the utilisation of GPS data extracted from CAMs broadcast by CVs to actuate signal timings. Inductive loop flow data are deliberately ignored so that the algorithm's performance relies solely on the information collected from CAMs communicated over a DSRC channel. 
 
 Algorithm~\ref{alg:gpsva}, which describes the GPS-VA implementation, can be understood in two parts, vehicle data acquisition, and intersection control:
 
 \subsubsection{Vehicle data acquisition}
 Vehicle data acquisition determines which CAMs originate from vehicles in the junction's control region, determining the queue length on routes that are not inactive, and the locations and velocities of the vehicles on the active lane.
 
-The junction control region is defined as the $250\m$ radius surrounding the junction (area of reliable communication, cf. Section \ref{sec:wicomm}). If another junction exists inside the control region, the boundary is cropped to $10\m$ less than the conflicting junction's location. The boundary reduction ensures as large a control region as possible while allowing data from vehicles associated with other junctions to be ignored. 
+The junction control region is defined as the $250\m$ radius surrounding the junction. If another junction exists inside the control region, the boundary is cropped to $10\m$ less than the conflicting junction's location. The boundary reduction ensures as large a control region as possible while allowing data from vehicles associated with other junctions to be ignored. 
 
-The junction controller receives CAMs from all vehicles inside its control region, ignoring those that are not. The CAMs are broadcast by vehicles at a rate of $10\Hz$ over a DSRC network (cf. Section \ref{sec:cam}). For these experiments, it is assumed that the junction controller receives an accurate snapshot of the network at a delay of 0.2 s. Further work may integrate a network simulation layer, such as ns-3~\cite{Riley2010}, to more accurately gauge the effects of the communication system on the algorithm's performance. The GPS position provided by the CAM updates at a rate of $10\Hz$. In future, one may implement a system that considers multiple time-scales (e.g., $1\Hz,\ 5\Hz$, and $10\Hz$ GPS).
+The junction controller receives CAMs from all vehicles inside its control region, ignoring those that are not. The CAMs are broadcast by vehicles at a rate of $10\Hz$ over a DSRC network. For these experiments, it is assumed that the junction controller receives an accurate snapshot of the network at a delay of 0.2 s. Further work may integrate a network simulation layer, such as ns-3~\cite{Riley2010}, to more accurately gauge the effects of the communication system on the algorithm's performance. The GPS position provided by the CAM updates at a rate of $10\Hz$. In future, one may implement a system that considers multiple time-scales (e.g., $1\Hz,\ 5\Hz$, and $10\Hz$ GPS).
 
 The junction controller stores data regarding the vehicle positions and headings. The vehicles' velocities can be inferred from CAM data from previous time steps, and their lanes and approaches can be inferred from their headings. The junction controller has knowledge of its own layout/map and is able to determine the headings that correspond to an approach on each of its lanes. Vehicles in range of the junction and travelling with headings matching one of the known approaches ($\pm$ a certain tolerance to allow for GPS positioning error) are considered to be approaching the junction.
 
@@ -437,7 +445,7 @@ If oncoming vehicles in the active lane are within $25\m$ of the intersection, t
 		}
 	}
 \end{algorithm}
-\setlength{\textfloatsep}{5pt}
+%\setlength{\textfloatsep}{5pt}
 
 \subsection{Hybrid Vehicle Actuation Algorithm}\label{sec:hva}
 The HVA algorithm incorporates dynamic real-time information from CAMs received from vehicle broadcasts and incorporates flow data from inductive loops for robustness when the presence of CVs is low. Algorithm~\ref{alg:HVA} details the implementation of HVA. HVA uses the same queue length estimation and moving vehicle tracking mechanism as GPS-VA. However, the key improvement  HVA makes over GPS-VA is that if no CVs are detected then it will try to make a stage time estimation using Loop-VA. There is also the case at low CV penetrations where CVs are present but not within the $25\m$ near-intersection catch area. If no CVs are detected near the intersection the controller will also check the inductive loop data for vehicle presence and if vehicles are detected Loop-VA is used to extend the stage time.
@@ -463,7 +471,7 @@ The HVA algorithm incorporates dynamic real-time information from CAMs received 
 				stageDuration[laneID] $\gets$ $\max(\text{queueClearTime},\,\text{remainingTime})$\\
 				stageDuration[laneID] $\gets$ $\min(\text{stageDuration[laneID]},\,\text{maxGreenTime})$\\
 			}
-			\uElseIf{laneIsActive \textbf{and not} detectedCVs \textbf{and not} stageSetByVelocityEstimationInLastStep}{
+			\uElseIf{laneIsActive \textbf{and not} detectedCVs}{
 				\textbf{DO:} get flow data from inductive loops\\
 				flow $\gets$ activeLaneFlow \\
 				\eIf{flow $>$ flowThreshold}{
@@ -496,7 +504,7 @@ The HVA algorithm incorporates dynamic real-time information from CAMs received 
 		}
 	}
 \end{algorithm}
-\setlength{\textfloatsep}{5pt}
+%\setlength{\textfloatsep}{5pt}
 
 \section{Simulation}\label{sec:sim}
 Here, microsimulation is used to test whether intersection management can be improved using information from standardised ITS data streams. The HVA strategy is compared to the cases where intersections are managed by fixed-time, Loop-VA, and GPS-VA controllers. The HVA algorithm was tested using data from 1 (stop line) and 2 (stop line and upstream) inductive loops. The simulations are performed using the \emph{SUMO (version 0.30.0)} microsimulation environment~\cite{Krajzewicz2006}. The simulation is controlled using a Python API~\cite{python, traci1, box} that interfaces with \emph{SUMO} and contains four intersection models (see Figure~\ref{fig:roads}). All roads in the models operate at a $50\km\sidiv\hour$ speed limit, and the intersections contain inductive loops at $6\m$ and $18\m$ from each stop-line per UK Highways Agency standard MCE 0108~\cite{mce0108a}.
@@ -523,13 +531,13 @@ The Krauss~\cite{Krauss1998} microscopic car-following model was chosen as it pr
 	\caption{The Krauss car-following model parameter values for both unconnected vehicles and CVs.\vspace{-1.ex}}
 	\begin{tabular}{p{0.25\textwidth} >{\centering\arraybackslash}p{0.1\textwidth}}
 		\toprule
-		\textbf{Parameter} & \textbf{Value} \\\toprule
-		Acceleration $(\m\sidiv\s^2)$ & 0.8 \\ \midrule
-		Deceleration $(\m\sidiv\s^2)$ & 4.5 \\ \midrule
-		Driver Imperfection - $\sigma$ & 0.5 \\ \midrule
-		Reaction Time - $\tau(\s)$ & 1.0 \\ \midrule
-		Length $(\m)$ & 5.0 \\ \midrule
-		Min. Gap $(\m)$ & 2.5 \\ \midrule
+		\textbf{Parameter (\emph{unit})} & \textbf{Value} \\\toprule
+		Acceleration $(\m\sidiv\s^2)$ & $0.8$ \\ \midrule
+		Deceleration $(\m\sidiv\s^2)$ & $4.5$ \\ \midrule
+		Driver Imperfection - $\sigma$ & $0.5$ \\ \midrule
+		Reaction Time - $\tau(\s)$ & $1.0$ \\ \midrule
+		Length $(\m)$ & $5.0$ \\ \midrule
+		Min. Gap $(\m)$ & $2.5$ \\ \midrule
 		Max. Speed $(\m\sidiv\s)$ & 25 \\ 
 		\bottomrule
 	\end{tabular}
@@ -538,7 +546,7 @@ The Krauss~\cite{Krauss1998} microscopic car-following model was chosen as it pr
 \end{table}
 
 \subsection{Traffic Generation}
-Vehicle routes are randomly generated for each simulation run based on the probability of a vehicle travelling along a given route at rates of $\sim\!\!1500\ veh/h$ for approximately $3$ hours. The vehicles are randomly assigned a type (unconnected or CV) based on a CV penetration ratio from $0$ to $1$. The CV presence in the network is incremented from $0\%$ to $100\%$ in steps of $10\%$. As the proportion of CVs and the routes are defined at random, the experiments are repeated 15 times for each CV penetration to achieve reliable mean delays and confidence intervals. All random samples are uniformly distributed, and the random number generator for the route generation process is seeded using the run number so that the results are repeatable.
+Vehicle routes are randomly generated for each simulation run based on the probability of a vehicle travelling along a given route at rates of $\sim\!\!1500\ veh/h$ for approximately $3$ hours. The vehicles are randomly assigned a type (unconnected or CV) based on a CV penetration ratio from $0$ to $1$. The CV presence in the network is incremented from $0\%$ to $100\%$ in steps of $10\%$. As the proportion of CVs and the routes are defined at random, the experiments are repeated $15$ times for each CV penetration to achieve reliable mean delays and confidence intervals. All random samples are uniformly distributed, and the random number generator for the route generation process is seeded using the run number so that the results are repeatable.
 
 \subsection{Free-flow Travel Times}\label{sec:freeflow}
 The free-flow travel time is the base on which the delay calculations in Section~\ref{sec:discussion} are made. Free-flow travel time is established by setting all intersection lights to green and passing $50$ cars along each route in all the models. The average free-flow travel time for each route is then established. The vehicle departures are spaced in time so that the vehicles do not interact. Additional time is added between the calculation of a subsequent route's free-flow time to allow vehicles from the previous test to clear the network.
@@ -546,44 +554,47 @@ The free-flow travel time is the base on which the delay calculations in Section
 \begin{figure*}[!tb]
 	\begin{center} 
 		\includegraphics[width=\textwidth]{./pictures/delay_grid.pdf}
-		\vspace{-15pt}
-		\caption{Travel-time delay for the intersection control strategies on each of the four road networks. The solid lines denote the mean delay over all the simulation runs. The dashed lines denote the 5th and 95th percentiles of the data as an indicator of travel time variability.}
+		\vspace{-5pt}
+		\caption{Travel-time delay for the intersection control strategies on each of the four road networks. The solid lines denote the mean delay over all the simulation runs. The error bars encapsulate the $5$th and $95$th percentiles of the data as an indicator of travel time variability.}
 		\label{fig:results}
 	\end{center}
 	\vspace{-5pt}
 \end{figure*}
 
 \section{Results and Discussion}\label{sec:discussion}
-The proposed GPS-VA algorithm is tested against the fixed-time and Loop-VA control algorithms on four road network models at increasing levels of CV penetration. Where CV penetration is the percentage of vehicles in the network that are CVs. Figure~\ref{fig:results} shows a comparison of the delay times for each intersection control strategy on each road model. 
+The proposed HVA algorithm is tested against fixed-time, Loop-VA, and GPS-VA control algorithms on four road network models at increasing levels of CV penetration. Figure~\ref{fig:results} shows a comparison of the delay times for each intersection control strategy on each road model. Here, CV penetration is the percentage of vehicles in the network that are connected. 
 
 Travel-time delay characterises the excess time a vehicle takes to complete its journey compared to the free-flow travel time for the same journey. The simulation time $T_{\rm sim}$ is:
 \begin{equation}
 T_{\rm sim} = T_{\rm out} - T_{\rm add}
 \end{equation}
-where $T_{\rm add}$ is the time the vehicle is added to the simulation, and $T_{\rm out}$ is the time the vehicle exits the simulation. Time delay $T_{\rm Delay}$ can therefore be given by
+where $T_{\rm add}$ is the time the vehicle is added to the simulation, and $T_{\rm out}$ is the time the vehicle exits the simulation. Time delay $T_{\rm Delay}$ can therefore be given by:
 \begin{equation}
 T_{\rm Delay} = T_{\rm sim} - T_{\rm freeflow}
 \end{equation}	
 where $T_{\rm freeflow}$ is the time it takes the vehicle to make its journey on an unobstructed route. The free-flow travel times $T_{\rm freeflow}$ are as calculated in Section~\ref{sec:freeflow}. Delay time indicates the amount of time actually saved compared to the complete journey time, and highlights the performance limitations of each method.
 
-Figure~\ref{fig:results} shows a comparison of the delay times for each intersection control strategy on each road model. It can be seen that in all cases, the traffic responsive actuated control strategies reduce delays better than the fixed-time algorithm. GPS-VA degenerates to fixed-time with minimum green time cycles and performs poorly at low CV penetrations. However, at CV penetration rates exceeding $30\%$, GPS-VA reduces delay comparably to or better than the implemented Loop-VA strategy for different traffic levels. GPS-VA's poor performance at low CV penetrations is expected, as the strategy degenerates to fixed time control with minimum green cycle phase lengths. The poor performance at low CV penetrations is a direct result of a control action deficit, and suggests that future work should investigate a system that uses both inductive loop and CAM information cooperatively to increase the algorithm's robustness. The Loop-VA and fixed-time strategies do not show as large a delay difference in the corridor model as in the other three. This is due to the short road segments connecting each junction inhibiting traffic flow. A coordinated strategy is more appropriate than isolated control in this case.
+Figure~\ref{fig:results} shows a comparison of the delay times for each intersection control strategy on each road model. It can be seen that in all cases, the traffic responsive actuated control strategies reduce delays better than the fixed-time algorithm. GPS-VA degenerates to fixed-time with minimum green time cycles and performs poorly at low CV penetrations. However, at CV penetration rates exceeding $30\%$, GPS-VA reduces delay comparably to or better than the implemented Loop-VA strategy for different traffic levels. GPS-VA's poor performance at low CV penetrations is expected, as the strategy degenerates to fixed time control with minimum green cycle phase lengths. The poor performance at low CV penetrations is a direct result of a control action deficit.
 
-Discuss HVA1 and HVA2 results...
+The HVA algorithm was tested with input from both $1$ loop and $2$ loops. The $1$ loop case partially overcomes the control action deficit present in GPS-VA but still requires CV penetrations of about $30\%$ or greater to improve on VA. HVA with $2$ loops performs at least as well as VA in all cases and typically outperforming GPS-VA for CV penetrations between $0\%-50\%$. However, the performance of HVA is not as good as GPS-VA in most cases for CV penetrations between $50\%-100\%$. The reduced performance at high CV penetrations is a result of the detected flow at the loops triggering an extension after a CAV has crossed the stop line, unnecessarily extending the stage time. This false triggering is less prevalent in the topologies where there are more junctions, and the vehicle queues have less chance of accelerating to the speed limit. Ideally, the delay trend would be similar to the Manhattan grid case. The conflict in control information suggests that future work should investigate a system that can estimate the CV penetration and determine when it is beneficial to ignore loop data. HVA should also be tested at different traffic levels to see how its performance varies with number of vehicles. The travel times for CVs and normal vehicles should also be assessed separately to ensure the algorithm is not heavily biased towards one class of road user.
 
-The reduction in delay with increasing CV penetration for GPS-VA is similar for road networks (a), (c), and (d), but much steeper for network (b). The alternative trend in the delay line on network (b) could be attributed to the proximity of the junctions, or more likely is due to the traffic demand levels applied to the network being too low to stress the junction adequately.
+The Loop-VA and fixed-time strategies do not show as large a delay difference in the corridor model as in the other three. This is due to the short road segments connecting each junction inhibiting traffic flow. A coordinated strategy is more appropriate than isolated control in this case.
+
+%The reduction in delay with increasing CV penetration for HVA is similar for road networks (a), (c), and (d), but much steeper for network (b). The alternative trend in the delay line on network (b) could be attributed to the proximity of the junctions, or more likely is due to the traffic demand levels applied to the network being too low to stress the junction adequately.
 
 \section{Conclusions and Future Work}\label{sec:conclusion}
-This paper explores how traffic responsive vehicle actuation for isolated intersection can be achieved using GPS and inductive loop data. The HVA algorithm uses position and heading data received from CV status broadcasts to actuate intersection signal timings by determining vehicle queue lengths and detecting vehicles passing through the intersection. Where CV data is unavailable the HVA algorithm attempts to use data from inductive loops to perform Loop-VA.
+This paper explores the performance of a hybrid traffic responsive intersection control algorithm using GPS and inductive loop data in comparison to traditional intersection control strategies. The HVA algorithm uses position and heading data received from CV status broadcasts to actuate intersection signal timings by determining vehicle queue lengths and detecting vehicles passing through the intersection. Where CV data is unavailable, the HVA algorithm uses data from inductive loops to perform Loop-VA.
 
-The HVA algorithm shows how data sources can be used together to achieve better control than either in isolation. HVA also demonstrates how multiple algorithms can be used and selected based on which provides the best solution for the current traffic demand. By using both GPS and loop data HVA provides the enhanced control afforded by ITS data streams, while remaining robust at low CV penetrations. In practice, the algorithm could be deployed in urban areas in the near future, and as the areas residents adopt CVs the control improves as people update their vehicles. This contrasts many of the current ITS based control algorithms which rely on high CV penetrations.
+%The proposed HVA algorithm shows how data sources can be used together to achieve better control than either in isolation. HVA also demonstrates how multiple algorithms can be used and selected based on which provides the best solution for the current traffic demand. By using both GPS and loop data HVA provides the enhanced control afforded by ITS data streams, while remaining robust at low CV penetrations. In practice, the algorithm is ideal for deployment within urban areas in the near future, as the control improves as people update their vehicles progressively adopting CVs. The robustness of HVA for all CV penetrations contrasts many of the current ITS based control algorithms which rely on high CV penetrations.
 
-Microscopic simulations were performed to see how the proposed HVA algorithm using 1 and 2 inductive loops performs compared to fixed-time, Loop-VA,  and GPS-VA control strategies on four common urban road topologies. 
-The results show that HVA is a compelling alternative to traditional intersection control strategies, showing delay reductions of $10\%-50\%$ over traditional Loop-VA for CV penetrations exceeding $30\%$.
+%Microscopic simulations were performed to see how the proposed HVA algorithm using $1$ and $2$ inductive loops performs compared to fixed-time, Loop-VA,  and GPS-VA control strategies on four common urban road topologies. The results show that HVA with $2$ loops is a compelling alternative to traditional intersection control strategies, showing delay reductions up to $32\%$ on average over traditional Loop-VA, and better performance than GPS-VA at CV penetrations below $50\%$ and in all cases for the Manhattan grid road network.
+
+Microscopic simulations were performed to see how the proposed HVA algorithm using 1 and 2 inductive loops performs compared to fixed-time, Loop-VA,  and GPS-VA control strategies on four common urban road topologies. The results show that HVA with 2 loops is a compelling alternative to traditional intersection control strategies, showing delay reductions up to $32\%$ on average over traditional Loop-VA. HVA also demonstrates better performance than GPS-VA at CV penetrations below $50\%$ and in all cases for the Manhattan grid road network. By using both GPS and loop data, HVA provides an enhanced signalised intersection control afforded by ITS data streams, while remaining robust at low CV penetrations. The proposed HVA algorithm shows how traffic data sources can be used together to achieve better traffic signal control than either in isolation. HVA also demonstrates how multiple algorithms can be used and selected based on which provides the best solution for the current traffic demand. In practice, the algorithm is ideal for deployment within urban areas in the near future, as the control improves as people update their vehicles progressively adopting CVs. The robustness of HVA for all CV penetrations contrasts many of the current ITS based control algorithms which rely on high CV penetrations. 
 
 Algorithms that incorporate data from CVs and that consider low CV fleet penetrations are still an underdeveloped research area. Further work needs to be done to investigate which ITS data streams are the most effective for signalised intersection control, and increase the robustness of control algorithms at low CV penetrations. Work also needs to be done to establish the effects of errors on the HVA algorithm. Communication packet loss, GPS measurement noise, and disparate GPS measurement rates all must be considered if the algorithm is to be robust in real road networks and reliably provide reduced travel times to drivers.
 
 \section{Acknowledgements}
-The authors would like to acknowledge support from the EPSRC and the Transport Research Laboratory (TRL) under Centre for Doctoral Training grant EP/L015382/1.
+The authors would like to acknowledge financial support from the Engineering and Physical Sciences Research Council (EPSRC) and the Transport Research Laboratory (TRL).
 
 \newpage
 

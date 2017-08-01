@@ -26,6 +26,7 @@
 \RequirePackage{textcomp}
 \RequirePackage[pagewise, mathlines]{lineno}
 \RequirePackage{geometry}
+\RequirePackage{fancyhdr}
 
 \RequirePackage[sort&compress, numbers]{natbib}
 \RequirePackage{xparse}
@@ -65,7 +66,7 @@
 %------------------------------------------------------------------------------ 
 \geometry{textwidth=6.5in, textheight=9.0in}
 \geometry{top=1in, left=1in}
-\geometry{headheight=0.3in, headsep=0.2in}
+%\geometry{headheight=0.3in, headsep=0.2in}
 
 % Text formatting
 %------------------------------------------------------------------------------ 
@@ -74,10 +75,19 @@
 
 % Header
 %------------------------------------------------------------------------------
-\newpagestyle{main}{
-\sethead{\@AuthorHeaders}{}{\thepage}
-}
-\pagestyle{main}
+%\newpagestyle{main}{
+%\sethead{\@AuthorHeaders}{}{\thepage}
+%}
+%\pagestyle{main}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyheadoffset[L]{0.333cm}
+\fancyheadoffset[R]{-0.333cm}
+\lhead[L]{\@AuthorHeaders}
+\rhead{\thepage}
+\headheight 0.3in
+\headsep 0.2in
+\pagestyle{fancy}
 
 % HEADINGS
 %------------------------------------------------------------------------------

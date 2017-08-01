@@ -44,7 +44,7 @@ controllers = ['fixedTime', 'VA', 'GPSVA', 'HVA1','HVA']
 modDict = {'simpleT':'Simple-T', 'twinT':'Twin-T', 'corridor':'Corridor', 'manhattan':'Manhattan'}
 limDict = {'simpleT':[[18, 28],[0,100], 1, 10], 'twinT':[[0,1100], [0,1000], 100, 100], 
 	'corridor':[[65,100], [0,800], 5, 100], 'manhattan':[[80,210], [0,900], 10, 100]}
-ctrlDict={'fixedTime':'FT', 'VA':'VA', 'GPSVA':'GPS-VA', 'HVA':'HVA', 'HVA1':'HVA1'}
+ctrlDict={'fixedTime':'FT', 'VA':'VA', 'GPSVA':'GPS-VA', 'HVA':'HVA', 'HVA1':'HVA1', 'HVAbias':'HVAbias'}
 
 # Run index and AV ration definitions
 runs = np.arange(1, 16)
@@ -55,7 +55,8 @@ SCALING = 0
 lineStyle = {'VA':'^k', 
 	'fixedTime':'vC2', 
 	'GPSVA':'*C1', 
-	'HVA1':'sC0', 
+	'HVA1':'sC0',
+	'HVAbias':'sC0', 
 	'HVA':'oC3'}
 
 def plotArr(x, y):

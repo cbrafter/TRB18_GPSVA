@@ -22,7 +22,7 @@ def parallelParser(x):
         print('Starting '+ repr(x))
         # Run index and AV ration definitions
         runs = np.arange(1, 16)
-        if controller in ['HVA', 'HVA1', 'GPSVA']:
+        if controller in ['HVA', 'HVA1', 'GPSVA', 'HVAbias']:
             AVratios = np.linspace(0, 1, 11)
         else:
             AVratios = np.array([0])
@@ -122,8 +122,8 @@ def parallelParser(x):
 models = ['simpleT', 'twinT', 'corridor', 'manhattan']
 #models = ['simpleT']
 tlControllers = ['fixedTime', 'VA', 'HVA', 'HVA1', 'GPSVA']
-configs = list(itertools.product(models[:1:-1], ['HVA', 'HVA1']))
-configs = list(itertools.product(['simpleT'], ['HVA']))
+configs = list(itertools.product(models[::-1], ['HVAbias']))
+#configs = list(itertools.product(['simpleT'], ['HVA']))
 
 workpool = mp.Pool(processes=6)
 # Run simualtions in parallel
